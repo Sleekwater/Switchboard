@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<html ng-app="switchboardApp">
+<head>
+<base href="/Switchboard/">
+
+<script src="js/forge-sha256.min.js"></script>
+
+
+<link rel="stylesheet" href="css/skeleton.css">
+<!-- Load angular from CDN  -->
+<!-- script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script> -->
+<script src="js/angular.min.js"></script>
+<script src="js/angular-cookies.min.js"></script>
+
+<!-- Font -->
+<!--  link href='https://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'-->
+<link href='css/font.css' rel='stylesheet' type='text/css'-->
+
+
+<script src="js/controllers.js"></script>
+<script src="js/services.js"></script>
+<script src="js/directives.js"></script>
+
+</head>
+
+
+
+<body ng-controller="DeviceCtrl">
+	<div ng-show="noAuth()" >
+		<div class="container" style="max-width: 960px;">
+				<h2>Switchboard</h2>	
+			<div class="row region" >
+				<div class="twelve columns">
+					<label for="nameInput">Name</label>
+     				 <input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:2em" ng-model="name">
+				</div>
+			</div>
+			<div class="row region" >
+				<div class="twelve columns">
+					<label for="passwordInput">Password</label>
+     				<input class="u-full-width" placeholder="Password" id="passwordInput" type="password" style="height:2em" ng-model="password">
+				</div>
+			</div>
+			<input class="button-primary" value="Login" type="submit" ng-click="login()">
+		</div>		
+	</div>
+
+	<div ng-show="!noAuth()">
+
+		<div class="container" ng-show="!connected()">
+			<div class="row region" >
+				<div class="twelve columns error">
+					<span>Connection problem</span>
+				</div>
+			</div>
+		</div>
+		<div class="container" ng-show="errormessage.length>0">
+			<div class="row region" >
+				<div class="twelve columns error">
+					<div ng-repeat="msg in errormessage track by $index" ng-click="removeErrorMessage($index)">{{msg}}</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row region" >
+				<div class="two columns">
+					<button class="wide" ng-click="toggleActivePanel('patch')" ng-class="{selected:isActivePanel('patch')}">Patch</button>
+				</div>
+				<div class="two columns">
+					<button class="wide" ng-click="toggleActivePanel('ignore')" ng-class="{selected:isActivePanel('ignore')}">Ignore</button>
+				</div>
+				<div class="two columns">
+					<button class="wide" ng-click="toggleActivePanel('audio')" ng-class="{selected:isActivePanel('audio')}">Audio</button>
+				</div>
+				<div class="two columns">
+					<button class="wide" ng-click="toggleActivePanel('sms')" ng-class="{selected:isActivePanel('sms')}">Text</button>
+				</div>
+				<div class="two columns">
+					<button class="wide" ng-show="issetup" ng-click="toggleActivePanel('goal')" ng-class="{selected:isActivePanel('goal')}">Goals</button>
+					&nbsp;
+				</div>
+				<div class="two columns">
+					<button class="wide" ng-click="toggleActivePanel('settings')" ng-class="{selected:isActivePanel('settings')}">Settings</button>			
+				</div>
+			</div>
+			<div class="row">
+				<div class="twelve columns">
+				&nbsp;
+				</div>	
+			</div>
+			<div class="row" ng-show="!isActivePanel('goal') && !isActivePanel('settings')">
+				<div class="six columns region">
+				
+					<input ng-model="query" style="width:99%;" placeholder="All devices">
+					<div style="float:right">
+					<ul style="width:32px">
+						<li style="overflow: hidden;" ng-repeat="device in devices | filter:query | orderBy:'name'" ng-class="{selected:device.selected}" ng-show="!hidden">
+							<div ng-show="!device.hidden">
+								<img src="images/multiselect.png" ng-click="toggleSelect(device)">
+							</div>
+						</li>
+					</ul>
+					</div>
+					<ul>
+						<li style="overflow: hidden;" ng-repeat="device in devices | filter:query | orderBy:'name'" ng-click="deviceSelect(device)" ng-class="{selected:device.selected}">
+							<div ng-show="!device.hidden">
+								<span>{{device.name}}</span>
+								<span style="margin-left:10%;">{{device.progress}}</span>									
+								<span style="float:right;">{{device.state}}</span>
+								<span style="float:right; margin-right:10px" ng-show="device.unreadmessages > 0">{{device.unreadmessages}}<img src="images/message.png"></span>
+								<span style="float:right; margin-right:10px" ng-show="device.recordings.length > 0">{{device.recordings.length}}<img src="images/recording.png"></span>
+							</div>
+						</li>
+						 
+					</ul>
+					<button ng-click="selectAuto('all')" ng-class="{selected:activeAuto=='all'}">All</button>
+					<button ng-click="selectAuto('ring')" ng-class="{selected:activeAuto=='ring'}">Ringing</button>				
+					<button ng-click="selectAuto('idle')" ng-class="{selected:activeAuto=='idle'}">Idle</button>
+					<button ng-click="selectAuto('group1')" ng-class="{selected:activeAuto=='group1'}">Group 1</button>				
+					<button ng-click="selectAuto('group2')" ng-class="{selected:activeAuto=='group2'}">Group 2</button>
+					<span ng-click="updatestatus()" class="normal" style="float:right">Refresh</span>
+					
+				</div>
+				<div class="six columns region">
+					
+					<div ng-show="getNumDevicesSelected()==0 && isActivePanel('overview')">
+						<h4>Overview</h4>
+						<div>Phone or SMS the switchboard on <b>07441 908765</b></div>
+						<h4>{{consoles.length}} console<span ng-show="consoles.length != 1">s</span> connected</h4>
+						<li class="normal" style="overflow: hidden;" ng-repeat="console in consoles">
+							Console '<span>{{console.name}}</span>'
+						</li>
+						This console is <span ng-show="connected()" class='noerror'>connected</span><span ng-show="!connected()" class='error'>not connected</span>
+						<h4>{{devices.length}} device<span ng-show="devices.length != 1">s</span> registered</h4>
+							{{getNumDevicesInState("RING")}} ringing in<br/>
+							{{getNumDevicesInState("CALL")}} being called<br/>
+							{{getNumDevicesInState("BUSY")}} busy with a message<br/>
+							{{getNumDevicesInState("IDLE")}} idle<br/>
+						<h4>{{audios.length}} audio file<span ng-show="audios.length != 1">s</span> available</h4>
+						<h4>{{texts.length}} text file<span ng-show="texts.length != 1">s</span> available</h4>
+						
+					</div>
+					
+					
+					<div ng-show="getNumDevicesSelected()>0 && isActivePanel('overview')">
+						<input ng-model="getSelectedDevice().name" style="width:60%;margin:10px;" placeholder="Label">
+						<button ng-click = "saveDevice()">Save</button>
+						<button ng-show="issetup" ng-click = "resetSelectedDevice()" class="error">Unregister</button>
+						<p>Number: {{getSelectedDevice().number}}<br>
+						<div ng-show="getSelectedDevice().cue">
+							<h4><button ng-click = "playCue()" ng-class="{go:hasCue()}">Cue</button>							
+							<span ng-show="getSelectedDevice().cue.text">
+								Send text: '{{getSelectedDevice().cue.text.label}}'
+							</span>
+							<span ng-show="getSelectedDevice().cue.audio">
+								Play audio '{{getSelectedDevice().cue.audio.name}}'
+							</span>
+							</h4>
+						</div>
+						
+						<h4>Audit</h4>
+						<li class="normal" style="overflow: hidden;" ng-repeat="a in getSelectedDevice().audit track by $index">
+							<span>{{a}}</span>
+						</li>
+						<h4>Recordings</h4>
+						<li class="normal" style="overflow: hidden;" ng-repeat="r in getSelectedDevice().recordings">
+							<span><a href="{{r.url}}" target="_blank">{{r.duration}} secs</a> </span>
+						</li>	
+						<br/>
+						
+					</div>
+					
+					
+					<div ng-show="isActivePanel('patch')">
+						<h4>{{getNumDevicesSelected()}} devices selected</h4>
+						Patch two devices, so that they can speak directly to each other.
+						<br>
+					
+						<button ng-click = "patch()" ng-class="{go:getCanPatch() > 0}">Go</button>
+						
+					</div>
+				
+					<div ng-show="isActivePanel('ignore')">
+						<h4>{{getNumNonIdleDevicesSelected()}} active devices selected</h4>
+						Hang up any calls currently in progress to these devices
+						<br>	
+						
+						<button ng-click = "ignore()" ng-class="{go:getNumNonIdleDevicesSelected() > 0}">Go</button>
+						
+					</div>
+				
+				
+					<div ng-show="isActivePanel('audio')">
+						
+						<div ng-show="issetup">
+							<h5>Upload a new audio file</h5>
+							<input type = "file" file-model = "myFile"/><button ng-click = "uploadFile()">Upload</button>
+						</div>
+						<input ng-model="audioquery" style="width:80%;margin:10px;" placeholder="{{audios.length}} audio files">	
+						<button ng-click = "broadcastAudio()" ng-class="{go:getNumIdleOrRingDevicesSelected() > 0 && activeAudio}">Call {{getNumIdleOrRingDevicesSelected()}}</button>
+					
+						<ul style="overflow-y: scroll; height:600px">
+							<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquery | orderBy:'name'" ng-click="selectAudio(audio)" ng-class="{selected:audio.name == activeAudio.name}">
+								<span>{{audio.name}}</span>
+								<span style="float:right;" ng-show="issetup" ng-click="deleteAudio(audio)">Delete</span>
+							</li>
+						</ul>	
+					</div>
+					
+					<div ng-show="isActivePanel('sms')">
+						<div ng-show="issetup" > 								
+							<input ng-model="currentLabel" style="width:95%;margin:10px; font-size:2em; height:2em;" placeholder="Label">
+						</div>
+						<textarea ng-trim="false" style="width:95%; margin:10px; font-size:1.5em; height:8em;" "type="text" ng-model="currentText"></textarea>	
+						<br/>
+						<button ng-click = "broadcastText()" ng-class="{go:getNumDevicesSelected() > 0 && currentText}">Send {{getNumDevicesSelected()}}</button>
+						<span>({{currentText.length}} characters, {{1+ ((currentText.length - 81) / 160) | number:0}} texts)</span>
+						<button style="float:right;" ng-show="issetup" ng-click="saveText()">Save</button>
+						<button style="float:right;" ng-click = "addText()" ng-show="issetup">Add</button>
+						<br/>
+						<input ng-model="smsquery" style="width:80%;margin:10px;" placeholder="{{texts.length}} text files">
+												
+						
+						<ul style="overflow-y: scroll; height:400px">
+							<li style="overflow: hidden;" ng-repeat="text in texts | filter:smsquery | orderBy:'label'" ng-click="selectText(text)" ng-class="{selected:text.label == activeText.label}">
+								<div> 								
+									<span>{{text.label}}</span>
+									<span style="float:right;" ng-show="issetup" ng-click="deleteText(text)">Delete</span>		
+								</div>		
+							</li>
+						</ul>
+						
+						
+						<br/>
+					
+						
+					</div>
+				</div>
+			
+			</div>
+			<div class="row" ng-show="isActivePanel('goal') || isActivePanel('settings')">
+				<div class="twelve columns region">
+				
+				
+					<div class="container" ng-show="isActivePanel('goal')">
+						<h4>Goals</h4>
+						<button ng-click="addGoal()">Add</button>					
+						
+						<ul style="overflow-y: scroll; height:300px">
+							<li style="overflow: hidden;" ng-repeat="goal in goals track by goal.name" ng-click="selectGoal(goal)" ng-class="{selected:goal.name == activeGoal.name}">
+								<span>{{describeGoal(goal)}}</span>
+								<span style="float:right;" ng-show="issetup" ng-click="deleteGoal(goal)">Delete</span>
+							</li>
+						</ul>
+						
+			
+						<div class="row region"  ng-show="activeGoal">
+							<button ng-click="saveGoal()" class="go" style="float:right">Save</button>						
+							<h4>When...</h4>
+							<div class="two columns">
+								<label><input type="radio" ng-model="activeGoal.srctype" value="audiostart"> Audio starts</label>
+								<label><input type="radio" ng-model="activeGoal.srctype" value="audiofinish"> Audio finishes</label>
+								<label><input type="radio" ng-model="activeGoal.srctype" value="textsent"> Text sent</label>
+								<label><input type="radio" ng-model="activeGoal.srctype" value="textreceived"> Text received</label>								
+								<label><input type="radio" ng-model="activeGoal.srctype" value="registeraudiofinish"> Registering by phone</label>
+								<label><input type="radio" ng-model="activeGoal.srctype" value="registertext"> Registering by text</label>
+							</div>
+							<div class="three columns" ng-show="activeGoal.srctype=='audiostart' || activeGoal.srctype=='audiofinish' || activeGoal.srctype=='record'">
+								<input ng-model="audioquerygoalsrc" style="width:90%;margin:10px;" placeholder="All audio files">
+								<ul style="overflow-y: scroll; height:300px">
+									<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquerygoalsrc | orderBy:'name'" ng-click="activeGoal.activeAudioGoalSrc=audio" ng-class="{selected:audio.name == activeGoal.activeAudioGoalSrc.name}">
+										<span>{{audio.name}}</span>
+									</li>
+								</ul>
+							</div>	
+							<div class="three columns" ng-show="activeGoal.srctype=='textsent'">
+								<input ng-model="textquerygoalsrc" style="width:90%;margin:10px;" placeholder="All text files">
+								<ul style="overflow-y: scroll; height:300px">
+									<li style="overflow: hidden;" ng-repeat="text in texts | filter:textquerygoalsrc | orderBy:'label'" ng-click="activeGoal.activeTextGoalSrc=text" ng-class="{selected:text.label == activeGoal.activeTextGoalSrc.label}">
+										<span>{{text.label}}</span>
+									</li>
+								</ul>
+							</div>
+							<div class="three columns" ng-show="activeGoal.srctype=='textreceived'">
+								<input ng-model="activeGoal.textsrc" style="width:90%;margin:10px;" placeholder="Text to match">								
+							</div>							
+							<div class="one column">
+								Wait for...<br/>
+								<input ng-model="activeGoal.delaytime" placeholder="seconds" style="width:100px; font-size:1em;"> seconds
+								<br/>and then...
+							</div>
+							<div class="two columns">
+								<label><input type="radio" ng-model="activeGoal.desttype" value="playaudio"> play audio</label>
+								<label><input type="radio" ng-model="activeGoal.desttype" value="sendtext"> send text</label>
+								<label><input type="radio" ng-model="activeGoal.desttype" value="setprogress"> set progress</label>								
+								<label ng-show="activeGoal.srctype=='audiofinish'"><input type="radio" ng-model="activeGoal.desttype" value="record"> record message </label>
+								<label><input type="radio" ng-model="activeGoal.desttype" value="cuetext"> cue text</label>															
+								<label><input type="radio" ng-model="activeGoal.desttype" value="cueaudio"> cue audio</label>															
+							</div>
+							<div class="three columns" ng-show="activeGoal.desttype=='playaudio' || activeGoal.desttype=='cueaudio'">
+								<input ng-model="audioquerygoaldest" style="width:90%;margin:10px;" placeholder="All audio files">
+								<ul style="overflow-y: scroll; height:300px">
+									<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquerygoaldest | orderBy:'name'" ng-click="activeGoal.activeAudioGoalDest=audio" ng-class="{selected:audio.name == activeGoal.activeAudioGoalDest.name}">
+										<span>{{audio.name}}</span>
+									</li>
+								</ul>
+							</div>
+							<div class="three columns" ng-show="activeGoal.desttype=='sendtext' || activeGoal.desttype=='cuetext'">
+								<input ng-model="textquerygoaldest" style="width:90%;margin:10px;" placeholder="All text files">
+								<ul style="overflow-y: scroll; height:300px">
+									<li style="overflow: hidden;" ng-repeat="text in texts | filter:textquerygoaldest | orderBy:'label'" ng-click="activeGoal.activeTextGoalDest=text" ng-class="{selected:text.label == activeGoal.activeTextGoalDest.label}">
+										<span>{{text.label}}</span>
+									</li>
+								</ul>
+							</div>
+							<div class="three columns" ng-show="activeGoal.desttype=='setprogress'">
+								<input ng-model="activeGoal.setprogress" style="width:90%;margin:10px;" placeholder="Progress">								
+							</div>							
+							<div class="three columns" ng-show="activeGoal.srctype=='audiofinish' && activeGoal.desttype=='record'">
+								<input ng-model="activeGoal.recordtime" style="width:90%;margin:10px;" placeholder="Seconds">								
+							</div>							
+											
+						</div>	
+						
+					</div>
+					<div ng-show="isActivePanel('settings')">
+						<h4>System settings</h4>
+						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices. This cannot be undone.<br/>					
+						<button ng-click="setupMode()" ng-class="{selected: issetup}">Setup</button>&nbsp;Show additional controls in the UI for setup before the performance<br/>
+						<button ng-click="logoff()">Logoff</button>&nbsp;Log off from the console
+					</div>
+				</div>
+			</div>	
+			
+			
+		</div>
+
+	</div>
+</body>
+
+
+
+
+</html>
