@@ -14,9 +14,9 @@
   
 </head>
 
-<body ng-controller="ChatCtrl">
-  <form ng-submit="send()">				
-	  <div class="container">
+<body ng-controller="ChatCtrl" style="font-size:2em">
+  <form ng-submit="send()" id="scroll">				
+	 <div id="container" banner="80" class="container banner" style="overflow:auto;">
 	    <p class="datestamp">{{date | date:'medium'}}</p>
 	 
 	    <div style="overflow: hidden;" ng-repeat="message in messages track by $index">
@@ -24,12 +24,12 @@
 				<p>{{message.text}}</p>
 			</div>
 		</div>
-		 
-	  	<div style="width:100%; display: flex;">
-	  		<input style="flex:2" type="text" name="message" ng-model="message">
-	  		<button style="float:right; width:100px;" ng-click="send()">Send</button>
-	  	</div>
-	  </div>
+	</div>	 
+  	<div id="footer" style="width:100%; height:70px; display: flex;">
+  		<input style="flex:2; height:100%; font-size:1.5em;" type="text" name="message" ng-model="message">
+  		<button style="float:right; height:100%; font-size:1.5em;" ng-click="send()">Send</button>
+  	</div>
+  
   </form>
 </body>
 </html>

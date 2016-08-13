@@ -50,6 +50,12 @@ p {
   line-height: 1.25em;
 }
 
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
 .datestamp {
   display: block;
   text-align: center;
@@ -63,8 +69,7 @@ p {
 /** page structure **/
 .container {
   padding: 40px 20px;
-  margin: 0 auto;
-  max-width: 600px;
+  margin: 0 auto; 
 }
 
 

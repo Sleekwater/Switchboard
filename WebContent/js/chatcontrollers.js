@@ -1,6 +1,23 @@
 var phonecatApp = angular.module('switchboardApp', ['ngCookies']);
 
-phonecatApp.controller('ChatCtrl', function ($scope, NotifyService, $cookies) {
+// Make the container a fixed size, less the "banner" of the input window - so that the sticky scrolling works
+phonecatApp.directive('banner', function ($window) {
+
+    return {
+        restrict: 'A',
+
+        link: function (scope, elem, attrs) {
+
+            var winHeight = $window.innerHeight;
+
+            var headerHeight = attrs.banner ? attrs.banner : 0;
+
+            elem.css('height', winHeight - headerHeight + 'px');
+        }
+    };
+});
+
+phonecatApp.controller('ChatCtrl', function ($scope, NotifyService, $cookies, $timeout) {
 	$scope.hasError = true;
 
 	$scope.date = new Date();
@@ -33,7 +50,6 @@ phonecatApp.controller('ChatCtrl', function ($scope, NotifyService, $cookies) {
 		$scope.notifyService.noAuth = true;
 	}
 
-
 	$scope.send = function()
 	{
 		if ($scope.message.length > 0)
@@ -49,4 +65,5 @@ phonecatApp.controller('ChatCtrl', function ($scope, NotifyService, $cookies) {
 	}
 	
 	$scope.login();
+	
 });

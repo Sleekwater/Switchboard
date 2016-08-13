@@ -52,6 +52,7 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 				{
 					// Add in the message to my array
 					Service.messages.push(data);
+					$timeout(Service.sticktobottom,100);		
 				}
 				
 				if (data.error)
@@ -87,6 +88,7 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	Service.ping = function(message){
 		console.log("Message " + message)
 		Service.messages.push({"text": message, "sent":true})
+		$timeout(Service.sticktobottom,100);		
 		Service.ws.send('{"device":"' +  $cookies.get('device') + '", "text":' + JSON.stringify(message) + '}');
 	};
 
@@ -103,6 +105,18 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 		} 
 		//ws.send('{"console":{"name":"' + getParameterByName("name") + '"}, "auth":"' + $cookies.get('auth') + '"}');
 	}
+	
+	Service.isScrolledToBottom = true;
+		
+	Service.sticktobottom = function(){
+		if(Service.isScrolledToBottom)
+		{
+			var out = document.getElementById("container");
+		    out.scrollTop = out.scrollHeight - out.clientHeight;
+		    //console.log("Scrolltop : " + out.scrollTop + "Scrollheight : " + out.scrollHeight + " clientHeight:" + out.clientHeight)
+		}
+	}
+
 
 	return Service;
 }]);

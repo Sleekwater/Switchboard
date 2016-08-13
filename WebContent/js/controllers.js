@@ -256,7 +256,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 			}
 		}
 
-		$scope.notifyService.ping('{"playtext":{"devices":' + JSON.stringify(selectedDevices) + ',"text":"' + $scope.currentText +'", "activetext":"' + ($scope.activeText == null ? "" : $scope.activeText.label) + '"}}')
+		$scope.notifyService.ping('{"playtext":{"devices":' + JSON.stringify(selectedDevices) + ',"text":' + JSON.stringify($scope.currentText) +', "activetext":"' + ($scope.activeText == null ? "" : $scope.activeText.label) + '"}}')
 	}
 
 	$scope.updatestatus = function(){
