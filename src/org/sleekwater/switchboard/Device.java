@@ -11,9 +11,11 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.websocket.Session;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.api.client.RestAPI;
 import com.plivo.helper.api.response.call.Call;
@@ -47,7 +49,9 @@ public class Device {
 
 	// Are we cueing up the next thing? Store it here (this is set by a goal)
 	public Audio cueAudio = null;
-	public Text cueText = null;	
+	public Text cueText = null;
+	// Is this device directly connected to a chat window via a websocket session?
+	public Session session = null;	
 	
 	@Override
 	public String toString()
@@ -88,7 +92,8 @@ public class Device {
 				.add("state", state.toString())
 				.add("progress", progress)
 				.add("recordings", recordingBuilder.build())
-				.add("cue", cueBuilder));
+				.add("cue", cueBuilder)
+				.add("direct", session != null));
 			
 	}
 
@@ -97,7 +102,7 @@ public class Device {
 		// Build our JSON message to send to the browser control console		
 		JsonObjectBuilder message = Json.createObjectBuilder();
 		this.toJson(message);		
-		DeviceWebSocketServer.sessionHandler.Broadcast(message.build());
+		ClientWebsocketServlet.sessionHandler.Broadcast(message.build());
 	}
 
 
@@ -143,7 +148,7 @@ public class Device {
 				if (null != resp.error)
 				{
 					this.state = DeviceState.IDLE;
-					DeviceWebSocketServer.sessionHandler.BroadcastError(resp.error);
+					ClientWebsocketServlet.sessionHandler.BroadcastError(resp.error);
 				}
 				System.out.println("Make call returned: " + resp.message);	// Normally "call fired"
 				
@@ -151,7 +156,7 @@ public class Device {
 
 			} catch (Exception e) {
 				this.state = DeviceState.IDLE;
-				DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+				ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 			}
 		}
 		else if (this.state == DeviceState.RING){
@@ -173,14 +178,14 @@ public class Device {
 				if (null != resp.error)
 				{
 					this.state = DeviceState.IDLE;
-					DeviceWebSocketServer.sessionHandler.BroadcastError(resp.error);
+					ClientWebsocketServlet.sessionHandler.BroadcastError(resp.error);
 				}
 				System.out.println(resp.message);	// Normally "transfer executed"
 				addAudit("Playing: " + audio.name);
 				broadcastChange("call");				
 			} catch (Exception e) {
 				this.state = DeviceState.IDLE;
-				DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+				ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 			}		
 
 		}
@@ -218,14 +223,14 @@ public class Device {
 				Call resp = api.makeCall(parameters);
 				if (null != resp.error)
 				{
-					DeviceWebSocketServer.sessionHandler.BroadcastError(resp.error);
+					ClientWebsocketServlet.sessionHandler.BroadcastError(resp.error);
 				}
 				System.out.println(resp.message);	// Normally "call fired"
 				this.state = DeviceState.CALL;
 				broadcastChange("call");
 
 			} catch (Exception e) {
-				DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+				ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 			}
 		}
 		else
@@ -244,13 +249,13 @@ public class Device {
 				GenericResponse resp = api.transferCall(parameters);
 				if (null != resp.error)
 				{
-					DeviceWebSocketServer.sessionHandler.BroadcastError(resp.error);
+					ClientWebsocketServlet.sessionHandler.BroadcastError(resp.error);
 				}
 				System.out.println(resp.message);	// Normally "transfer executed"
 				this.state = DeviceState.CALL;
 				broadcastChange("call");
 			} catch (PlivoException e) {
-				DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+				ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 			}		
 
 		}
@@ -258,30 +263,56 @@ public class Device {
 	}
 
 	/**
-	 * Send this literal text as an SMS
+	 * If we're directly connected then send the text across the websocket to the client chat window
+	 * @param text
+	 * @return True if delivered OK
+	 */
+	public boolean directMessage(String text)
+	{
+		if (this.session == null)
+			return false;
+	
+		try {
+			JsonObjectBuilder message = Json.createObjectBuilder();
+			message.add("text", text);				
+			session.getBasicRemote().sendText(message.build().toString());
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Send this literal text as an SMS or a direct message (if available)
 	 * @param text
 	 */
 	public void Sms(String text, Text activeText) {
-		// First I need to tell the current device to fetch some new XML
-		//POST https://api.plivo.com/v1/Account/{auth_id}/Call/{call_uuid}/
-		//	aleg_url  = 			
-		RestAPI api = new RestAPI(Settings.s.plivo_auth_id, Settings.s.plivo_auth_token, "v1");
-
-		LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
-		parameters.put("dst",this.number); // The phone number to which the all has to be placed
-		parameters.put("src",Settings.s.plivo_registerednumber); // The phone number to be used as the caller id
-		parameters.put("text", text); // Your SMS text message
-		parameters.put("url",Settings.s.callbackUrl + "Smsstatus");
-		parameters.put("method", "GET"); // The method used to call the url
-
+		
+		// Do any search and replace
+		text = text.replace("{{direct}}", Settings.s.callbackUrl + "chat.html?device=" + this.number);
+		
 		try {
-			// Send the message
-			MessageResponse msgResponse = api.sendMessage(parameters);
-			if (null != msgResponse.error)
+			// Do I have a direct connection? Prefer it if so
+			if (!directMessage(text))
 			{
-				DeviceWebSocketServer.sessionHandler.BroadcastError(msgResponse.error);
-			}
-			System.out.println(msgResponse.message);
+				// No direct connection, so send the message via Plivo / SMS
+				RestAPI api = new RestAPI(Settings.s.plivo_auth_id, Settings.s.plivo_auth_token, "v1");
+
+				LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
+				parameters.put("dst",this.number); // The phone number to which the all has to be placed
+				parameters.put("src",Settings.s.plivo_registerednumber); // The phone number to be used as the caller id
+				parameters.put("text", text); // Your SMS text message
+				parameters.put("url",Settings.s.callbackUrl + "Smsstatus");
+				parameters.put("method", "GET"); // The method used to call the url
+
+				MessageResponse msgResponse = api.sendMessage(parameters);
+				if (null != msgResponse.error)
+				{
+					ClientWebsocketServlet.sessionHandler.BroadcastError(msgResponse.error);
+				}
+				System.out.println(msgResponse.message);
+			}			
+			
 			// We have an optional "active" text, which is the thing selected. However the literal characters sent may have been edited, which is the "text"
 			// So I try to match against whatever I've got available for a goal, as trying to match against edited messages is problematic
 			if (null == activeText)
@@ -297,7 +328,7 @@ public class Device {
 				Goals.checkGoal("activetext", activeText, this);
 			}
 		} catch (Exception e) {
-			DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+			ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 		}
 	}
 
@@ -325,7 +356,7 @@ public class Device {
 			try {
 				api.hangupCall(parameters);
 			} catch (Exception e) {
-				DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+				ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 			}	
 		}
 	}

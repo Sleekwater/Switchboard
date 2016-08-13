@@ -15,7 +15,7 @@ import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
 import org.sleekwater.switchboard.Settings;
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Servlet implementation class Answer

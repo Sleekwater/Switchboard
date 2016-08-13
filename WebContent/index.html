@@ -108,8 +108,9 @@
 								<span>{{device.name}}</span>
 								<span style="margin-left:10%;">{{device.progress}}</span>									
 								<span style="float:right;">{{device.state}}</span>
-								<span style="float:right; margin-right:10px" ng-show="device.unreadmessages > 0">{{device.unreadmessages}}<img src="images/message.png"></span>
-								<span style="float:right; margin-right:10px" ng-show="device.recordings.length > 0">{{device.recordings.length}}<img src="images/recording.png"></span>
+								<span style="float:right; margin-right:10px;" ng-show="device.unreadmessages > 0">{{device.unreadmessages}}<img src="images/message.png"></span>
+								<span style="float:right; margin-right:10px;" ng-show="device.recordings.length > 0">{{device.recordings.length}}<img src="images/recording.png"></span>
+								<span style="float:left; margin-right:10px;" ng-show="device.direct"><img src="images/direct.png"></span>
 							</div>
 						</li>
 						 

@@ -30,7 +30,7 @@ import org.sleekwater.switchboard.Texts;
 
 @ApplicationScoped
 @ServerEndpoint("/client")
-public class DeviceWebSocketServer {
+public class ClientWebsocketServlet {
 
 	public static SocketSessionHandler sessionHandler = new SocketSessionHandler();
 	

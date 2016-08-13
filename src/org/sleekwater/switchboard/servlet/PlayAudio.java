@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.exception.PlivoException;
 import com.plivo.helper.xml.elements.Play;
@@ -90,7 +90,7 @@ public class PlayAudio extends HttpServlet {
 			response.addHeader("Content-Type", "text/xml");
 			response.getWriter().print(resp.toXML());;
 		} catch (PlivoException e) {
-			DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+			ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 		}
 		Goals.checkGoal("audiostart", d.currentAudio, d);		
 	}

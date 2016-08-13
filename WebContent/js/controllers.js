@@ -236,8 +236,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 
 	// We always save the current text - don't need a text selected
 	$scope.saveText = function()
-	{	
-		$scope.notifyService.ping('{"deletetext":{"name":"' + $scope.activeText.label + '"}}')
+	{
+		if (null != $scope.activeText)
+		{
+			$scope.notifyService.ping('{"deletetext":{"name":"' + $scope.activeText.label + '"}}')
+		}
 		
 		$scope.notifyService.ping('{"savetext":{"name":' + angular.toJson($scope.currentText) + ', "label":"' + $scope.currentLabel + '"}}')
 	}
@@ -253,7 +256,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 			}
 		}
 
-		$scope.notifyService.ping('{"playtext":{"devices":' + JSON.stringify(selectedDevices) + ',"text":"' + $scope.currentText +'", "activetext":"' + $scope.activeText.label + '"}}')
+		$scope.notifyService.ping('{"playtext":{"devices":' + JSON.stringify(selectedDevices) + ',"text":"' + $scope.currentText +'", "activetext":"' + ($scope.activeText == null ? "" : $scope.activeText.label) + '"}}')
 	}
 
 	$scope.updatestatus = function(){

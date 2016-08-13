@@ -19,7 +19,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Keep an in-memory list of registered text messages<br/>

@@ -20,7 +20,7 @@ import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Keep an in-memory list of registered goals<br/>

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Keep an in-memory list of registered audio recordings<br/>

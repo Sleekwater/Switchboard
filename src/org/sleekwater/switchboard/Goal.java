@@ -6,7 +6,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Contains details about one audio recording
@@ -68,14 +68,14 @@ public class Goal {
 		message.add("goal", Json.createObjectBuilder()
 				.add("state", state.toString())
 				.add("name", name));
-		DeviceWebSocketServer.sessionHandler.Broadcast(message.build());
+		ClientWebsocketServlet.sessionHandler.Broadcast(message.build());
 	}
 
 	public void broadcastChange(String event)
 	{
 		JsonObjectBuilder message = Json.createObjectBuilder();
 		message.add("goal", goaljson);		
-		DeviceWebSocketServer.sessionHandler.Broadcast(message.build());
+		ClientWebsocketServlet.sessionHandler.Broadcast(message.build());
 	}
 
 	public String check(String eventtype, Object eventParam, Device d){

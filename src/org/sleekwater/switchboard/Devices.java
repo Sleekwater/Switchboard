@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import javax.websocket.Session;
+
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.api.client.RestAPI;
 import com.plivo.helper.api.response.call.LiveCall;
@@ -208,7 +210,7 @@ public final class Devices {
 
 
 		} catch (Exception e) {
-			DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+			ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 		}
 	}
 
@@ -320,6 +322,22 @@ public final class Devices {
 			}
 
 		}		
+	}
+
+	/** 
+	 * If we have a direct connection from a chat window then mark this device as such
+	 * @param connected
+	 */
+	public void directConnection(String number, Session session) {
+		synchronized(devices)
+		{
+			Device d = devices.get(number);
+			if (d.session != session)
+			{
+				d.session = session;
+				d.broadcastChange("direct");
+			}
+		}
 	}
 
 }

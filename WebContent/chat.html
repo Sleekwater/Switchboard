@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html ng-app="switchboardApp">
+<head>
+  <base href="/Switchboard/">
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Switchboard chat</title>
+  <link rel="stylesheet" type="text/css" media="all" href="css/chat.css">
+  
+  <script src="js/angular.min.js"></script>
+  <script src="js/angular-cookies.min.js"></script>  
+  <script src="js/chatcontrollers.js"></script>
+  <script src="js/chatservices.js"></script>
+  
+</head>
+
+<body ng-controller="ChatCtrl">
+  <form ng-submit="send()">				
+	  <div class="container">
+	    <p class="datestamp">{{date | date:'medium'}}</p>
+	 
+	    <div style="overflow: hidden;" ng-repeat="message in messages track by $index">
+			<div class="bubble" ng-class="(message.sent) ? 'bubble-alt green' : 'white'">
+				<p>{{message.text}}</p>
+			</div>
+		</div>
+		 
+	  	<div style="width:100%; display: flex;">
+	  		<input style="flex:2" type="text" name="message" ng-model="message">
+	  		<button style="float:right; width:100px;" ng-click="send()">Send</button>
+	  	</div>
+	  </div>
+  </form>
+</body>
+</html>

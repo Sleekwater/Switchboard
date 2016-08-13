@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Contains details about one text - this can be an SMS or a synthesized voice message
@@ -45,7 +45,7 @@ public class Text {
 		// Build our JSON message to send to the browser control console		
 		JsonObjectBuilder message = Json.createObjectBuilder();
 		this.toJson(message);		
-		DeviceWebSocketServer.sessionHandler.Broadcast(message.build());
+		ClientWebsocketServlet.sessionHandler.Broadcast(message.build());
 	}
 	
 	public void saveToFile(String fileName) {

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.DeviceState;
 import org.sleekwater.switchboard.Devices;
-import org.sleekwater.switchboard.websocket.DeviceWebSocketServer;
+import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.exception.PlivoException;
 import com.plivo.helper.xml.elements.Dial;
@@ -66,7 +66,7 @@ public class Patch extends HttpServlet {
             t.broadcastChange("call");
             
 		} catch (Exception e) {
-			DeviceWebSocketServer.sessionHandler.BroadcastError(e.getLocalizedMessage());
+			ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 		}
 	}
 }
