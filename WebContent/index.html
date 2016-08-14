@@ -120,8 +120,18 @@
 					<button ng-click="selectAuto('idle')" ng-class="{selected:activeAuto=='idle'}">Idle</button>
 					<button ng-click="selectAuto('group1')" ng-class="{selected:activeAuto=='group1'}">Group 1</button>				
 					<button ng-click="selectAuto('group2')" ng-class="{selected:activeAuto=='group2'}">Group 2</button>
+					<span ng-click='toggleModal()' style="float:right; margin-left:10px;">Add</span>
 					<span ng-click="updatestatus()" class="normal" style="float:right">Refresh</span>
-					
+						<modal-dialog show='modalShown' width='750px' height='60%'>
+							<h2>Add a device</h2>
+							<h4>It is important that you get the device number right.</h3>
+							If you provide an incorrect number you may be legally liable for nuisance calls under the laws of your country.<br/>
+							<a target="_window" href="http://consumers.ofcom.org.uk/phone/tackling-nuisance-calls-and-messages/recorded-message-marketing-calls/">OFCOM</a> is the regulatory body for the UK
+							<p>Provide the number starting with the country code, but without the initial 0.<br/>
+							For example, if your device phone number is +44 (0)1234 567890 then put 441234567890 here<p>
+							<input "type="text" ng-model="edit.newdevice" style="width:80%; margin:10px;" placeholder="Device number">
+							<button ng-click = "addDevice()">Add</button>							
+						</modal-dialog>					
 				</div>
 				<div class="six columns region">
 					

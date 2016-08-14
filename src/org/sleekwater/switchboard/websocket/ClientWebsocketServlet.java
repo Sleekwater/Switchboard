@@ -199,6 +199,11 @@ public class ClientWebsocketServlet {
 			{
 				Devices.uncue(uncue.getString("number"));
 			}
+			JsonObject register = o.getJsonObject("register");
+			if (null != register)
+			{
+				Devices.d.add(register.getString("number"),"console");
+			}
 	
 		}
 		catch (Exception e)

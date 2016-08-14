@@ -5,8 +5,20 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	$scope.hasError = true;
 	$scope.devices = NotifyService.devices;
 	$scope.fileUpload = fileUpload;
+	// WATCH OUT. Angular will break if you bind inputs directly to a value when in a child scope (e.g. a modal dialog), so you MUST bind to an object instead
+	$scope.edit = {};
 
-
+	$scope.addDevice = function(){
+		$scope.notifyService.ping('{"register":{"number":"' + $scope.edit.newdevice +'"}}')	
+		$scope.toggleModal();
+	}
+	
+	/* Modal stuff */
+	$scope.modalShown = false;
+	  $scope.toggleModal = function() {
+	    $scope.modalShown = !$scope.modalShown;
+	  };
+	
 	// Map the observables from the service into my scope so I can bind directly against them
 	$scope.messages = NotifyService.messages;
 	$scope.consoles = NotifyService.consoles;
