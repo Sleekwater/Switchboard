@@ -112,8 +112,22 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		$scope.activePanel = 'overview';
 	}
 
-
-
+	$scope.togglegroup1 = function()
+	{
+		if (!$scope.getSelectedDevice().group1)
+			$scope.getSelectedDevice().group1 = true;
+		else			
+			$scope.getSelectedDevice().group1 = false;
+	}
+	
+	$scope.togglegroup2 = function()
+	{
+		if (!$scope.getSelectedDevice().group2)
+			$scope.getSelectedDevice().group2 = true;
+		else			
+			$scope.getSelectedDevice().group2 = false;
+	}
+	
 	$scope.toggleSelect = function(device)
 	{
 
@@ -151,7 +165,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		$scope.activeAuto = auto;
 		$scope.notifyService.activeAuto = auto;
 		//console.log("selected " + auto)
-		if ($scope.activeAuto != "")
+		//if ($scope.activeAuto != "")
 			$scope.doAutoSelect();
 	}
 

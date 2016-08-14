@@ -106,6 +106,9 @@
 						<li style="overflow: hidden;" ng-repeat="device in devices | filter:query | orderBy:'name'" ng-click="deviceSelect(device)" ng-class="{selected:device.selected}">
 							<div ng-show="!device.hidden">
 								<span>{{device.name}}</span>
+								<span ng-show="device.group1"><img src="images/number1.png"></span>
+								<span ng-show="device.group2"><img src="images/number2.png"></span>
+								
 								<span style="margin-left:10%;">{{device.progress}}</span>									
 								<span style="float:right;">{{device.state}}</span>
 								<span style="float:right; margin-right:10px;" ng-show="device.unreadmessages > 0">{{device.unreadmessages}}<img src="images/message.png"></span>
@@ -118,8 +121,10 @@
 					<button ng-click="selectAuto('all')" ng-class="{selected:activeAuto=='all'}">All</button>
 					<button ng-click="selectAuto('ring')" ng-class="{selected:activeAuto=='ring'}">Ringing</button>				
 					<button ng-click="selectAuto('idle')" ng-class="{selected:activeAuto=='idle'}">Idle</button>
-					<button ng-click="selectAuto('group1')" ng-class="{selected:activeAuto=='group1'}">Group 1</button>				
-					<button ng-click="selectAuto('group2')" ng-class="{selected:activeAuto=='group2'}">Group 2</button>
+					<button ng-click="selectAuto('group1')" ng-class="{selected:activeAuto=='group1'}">Group 1
+					</button>									
+					<button ng-click="selectAuto('group2')" ng-class="{selected:activeAuto=='group2'}">Group 2
+					</button>
 					<span ng-click='toggleModal()' style="float:right; margin-left:10px;">Add</span>
 					<span ng-click="updatestatus()" class="normal" style="float:right">Refresh</span>
 						<modal-dialog show='modalShown' width='750px' height='60%'>
@@ -167,6 +172,8 @@
 							<span ng-show="getSelectedDevice().cue.audio">
 								Play audio '{{getSelectedDevice().cue.audio.name}}'
 							</span>
+							<button style="float:right" ng-click="togglegroup2()" ng-class="{go:getSelectedDevice().group2}">Group 2</button>		
+							<button style="float:right" ng-click="togglegroup1()" ng-class="{go:getSelectedDevice().group1}">Group 1</button>		
 							</h4>
 						</div>
 						
