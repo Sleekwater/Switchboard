@@ -62,7 +62,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	}
 
 	// Setup mode shows additional UI components, which are confusing when you're running a performance.
-	$scope.issetup = false;	
+	$scope.issetup = true;	
 	$scope.setupMode = function() {
 		$scope.issetup = !$scope.issetup;
 	}
@@ -210,7 +210,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	}
 	$scope.deleteAudio = function(audio)
 	{
-		$scope.notifyService.ping('{"deleteaudio":{"name":"' + audio.name + '"}}')
+		$scope.notifyService.ping('{"deleteaudio":{"name":"' + audio.name + '", "folder":"' + audio.folder + '"}}')
+	}
+	$scope.enterAudioFolder = function(audio)
+	{
+		$scope.currentAudioFolder = audio.name;
 	}
 
 	$scope.broadcastAudio = function(){
@@ -444,7 +448,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		//console.log('file is ' );
 		//console.dir(file);
 
-		var uploadUrl = "./FileUpload";
+		var uploadUrl = "./FileUpload?folder=" + $scope.currentAudioFolder;
 		$scope.fileUpload.uploadFileToUrl(file, uploadUrl);
 		$scope.myFile=null;
 	};
@@ -504,7 +508,10 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 
 		var dest = "<not set>"    	  
 			try{
-				if (goal.desttype == "playaudio") dest = "play audio '" + goal.activeAudioGoalDest.name + "'"
+				if (goal.desttype == "playaudio"){
+					if (goal.activeAudioGoalDest.isFolder) dest = "play a random audio from folder '" + goal.activeAudioGoalDest.name + "'";
+					if (!goal.activeAudioGoalDest.isFolder) dest = "play audio '" + goal.activeAudioGoalDest.name + "'";
+				}
 				if (goal.desttype == "sendtext") dest = "send text '" + goal.activeTextGoalDest.label + "'"
 				if (goal.desttype == "setprogress") dest = "change device progress to '" + goal.setprogress + "'"
 				if (goal.desttype == "record") dest = "record for up to " + goal.recordtime + " seconds"

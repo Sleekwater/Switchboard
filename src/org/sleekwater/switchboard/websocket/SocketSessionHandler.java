@@ -37,8 +37,9 @@ public class SocketSessionHandler {
     public List<String> validAccounts = new ArrayList<String>();
 
     public SocketSessionHandler(){
-        validAccounts.add(sha256("yournameyourpassword"));   
-        
+    	validAccounts.add(sha256("kevyourpassword"));   
+        validAccounts.add(sha256("leonieproducedmoon"));   
+        validAccounts.add(sha256("melanieproducedmoon"));   
     }
     
     public static String sha256(String base) {

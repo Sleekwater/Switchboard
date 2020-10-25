@@ -90,14 +90,24 @@ public class FileUpload extends HttpServlet {
         // Save the file here
         // Plivo doesn't like spaces in the name, so replace
         fileName = fileName.replace(' ', '_');
-        File uploads = new File(Settings.s.uploadDiskPath + "/" + fileName);
+        // Have we got a folder specified?
+        String folder = request.getParameter("folder");
+        if (folder.equalsIgnoreCase("undefined"))
+        	folder = "";
+        File uploads = new File(Settings.s.uploadDiskPath + "/" + (folder.length()==0?"" : folder + "/") + fileName);
         // Prevent traversals
-        if (0!=uploads.getParentFile().compareTo(new File(Settings.s.uploadDiskPath)))
+        if (!uploads.getParentFile().toPath().startsWith(new File(Settings.s.uploadDiskPath).toPath()))
         {
         	// Naughty!
-        	throw new ServletException("Cannot save there");
-        }               
+        	throw new ServletException("Cannot save to " + uploads.getParentFile().toPath());        	
+        }
+        // Create the folder if necessary
+        if (!uploads.getParentFile().exists())
+        {
+        	uploads.mkdirs();
+        }
+        
         Files.copy(fileContent, uploads.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Audios.a.add(uploads.toString(), fileName);
+        Audios.a.add(uploads.toString(), fileName, folder, false);
     }
 }
