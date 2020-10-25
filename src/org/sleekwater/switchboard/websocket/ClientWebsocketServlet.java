@@ -109,11 +109,16 @@ public class ClientWebsocketServlet {
 				JsonArray devices = playaudio.getJsonArray("devices");
 				Audio a = Audios.a.get(audio);
 				if (null != a)
-				{
+				{					
 					// TODO - pass the array to Plivo instead of looping here, as I think the play API can take an array...
 					for (JsonValue device : devices)
 					{
 						Device d = Devices.d.get(device.toString());
+						// Is this a folder? If so, pick a random child audio, preferring one that this device has not had
+						if (a.isFolder)
+						{
+							a = Audios.a.getRandomChild(a, d);
+						}
 						// We should be able to handle ringing calls here
 						if (null != d)
 							d.MakeCall(a);

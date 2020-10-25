@@ -163,8 +163,14 @@ public class Goal {
 					String audioname = goaljson.getJsonObject("activeAudioGoalDest").getString("name");
 					System.out.println("Goal is PlivoXML / playAudio " + audioname);
 					Audio a = Audios.a.get(audioname);
-					if (null != a)
-						return "<Play>" + a.getUrl() +"</Play>";						
+					if (null != a) {
+						// Is this a folder? If so, pick a random child audio, preferring one that this device has not had
+						if (a.isFolder)
+						{
+							a = Audios.a.getRandomChild(a, d);
+						}
+						return "<Play>" + a.getUrl() +"</Play>";		
+					}
 				}
 				}
 			}
@@ -225,7 +231,12 @@ public class Goal {
 			case "playaudio":				
 				String audioname = goaljson.getJsonObject("activeAudioGoalDest").getString("name");
 				System.out.println("Goal is playAudio " + audioname);
-				Audio a = Audios.a.get(audioname);				
+				Audio a = Audios.a.get(audioname);	
+				// Is this a folder? If so, pick a random child audio, preferring one that this device has not had
+				if (a.isFolder)
+				{
+					a = Audios.a.getRandomChild(a, d);
+				}
 				try {
 					if (null != d)
 						d.MakeCall(a);

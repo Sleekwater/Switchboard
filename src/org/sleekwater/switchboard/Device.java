@@ -49,6 +49,8 @@ public class Device {
 
 	// Are we cueing up the next thing? Store it here (this is set by a goal)
 	public Audio cueAudio = null;
+	// Have we played this audio to this device?
+	public List<Audio> playedAudios = new ArrayList<Audio>();
 	public Text cueText = null;
 	// Is this device directly connected to a chat window via a websocket session?
 	public Session session = null;	
@@ -133,6 +135,7 @@ public class Device {
 			parameters.put("to",this.number); // The phone number to which the all has to be placed
 			parameters.put("from",Settings.s.plivo_registerednumber); // The phone number to be used as the caller id
 			addAudit("Making call to " + this.number + " to play " + audio.name);
+			playedAudios.add(audio);
 
 			// answer_url is the URL invoked by Plivo when the outbound call is answered
 			// and contains instructions telling Plivo what to do with the call
@@ -182,6 +185,7 @@ public class Device {
 				}
 				System.out.println(resp.message);	// Normally "transfer executed"
 				addAudit("Playing: " + audio.name);
+				playedAudios.add(audio);
 				broadcastChange("call");				
 			} catch (Exception e) {
 				this.state = DeviceState.IDLE;

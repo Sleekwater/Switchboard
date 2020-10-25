@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
@@ -131,4 +132,47 @@ public final class Audios {
 			audios.clear();
 		}
 	}	
+	
+	/**
+	 * Pick one of the audios within this folder, randomly - preferring ones that have not been heard by this device before
+	 * @param folder
+	 * @param d
+	 * @return
+	 */
+	public Audio getRandomChild(Audio folder, Device d)
+	{
+		List<Audio> children = new ArrayList<Audio>();
+		synchronized(audios)
+		{
+			for (Audio a : audios.values())
+			{
+				if (a.isFolder.equals(folder.name)) {
+					children.add(a);
+				}
+			}
+		}
+		
+		// OK, we have all the possibles. Eliminate the ones that have already been played to this device
+		List<Audio> unplayed = new ArrayList<Audio>();
+		for (Audio a : children)
+		{
+			if (!d.playedAudios.contains(a)) {
+				unplayed.add(a);
+			}
+		}
+		
+		// Have we got any eligable results?
+		if (unplayed.size() > 0)
+		{
+			// Pick a random one
+			int randomNum = ThreadLocalRandom.current().nextInt(0, unplayed.size());
+			return unplayed.get(randomNum);
+		}
+		else
+		{
+			// Pick one we've heard before
+			int randomNum = ThreadLocalRandom.current().nextInt(0, children.size());
+			return children.get(randomNum);
+		}
+	}
 }

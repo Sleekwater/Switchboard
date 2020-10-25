@@ -57,8 +57,7 @@ public class PlayAudio extends HttpServlet {
 		
 		
 		System.out.println("PlayAudio " + d.currentAudio.getUrl() + " for device " + d.number);
-		d.addAudit("Playing audio: " + d.currentAudio.name);				
-
+		d.addAudit("Playing audio: " + d.currentAudio.name);		
 		
 		PlivoResponse resp = new PlivoResponse();
 		Play play = new Play(d.currentAudio.getUrl());
@@ -88,7 +87,7 @@ public class PlayAudio extends HttpServlet {
 			resp.append(playComplete);
 			System.out.println(resp.toXML());
 			response.addHeader("Content-Type", "text/xml");
-			response.getWriter().print(resp.toXML());;
+			response.getWriter().print(resp.toXML());
 		} catch (PlivoException e) {
 			ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 		}
