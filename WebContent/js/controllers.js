@@ -66,6 +66,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	$scope.setupMode = function() {
 		$scope.issetup = !$scope.issetup;
 	}
+	// You can either use goals or IVR, not both
+	$scope.isIvrmode = true;	
+	$scope.ivrMode = function() {
+		$scope.isIvrmode = !$scope.isIvrmode;
+	}
 
 
 	$scope.activePanel = 'overview'; 

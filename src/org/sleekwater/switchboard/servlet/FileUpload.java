@@ -17,6 +17,7 @@ import javax.servlet.http.Part;
 
 import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Goals;
+import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Texts;
 
@@ -74,6 +75,14 @@ public class FileUpload extends HttpServlet {
     	catch (Exception e){
     		System.out.println(e);
     	}
+    	
+    	try{
+    		IvrSteps.i.init();
+    	} 
+    	catch (Exception e){
+    		System.out.println(e);
+    	}
+
 
     }
     

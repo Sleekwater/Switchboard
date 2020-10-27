@@ -76,8 +76,12 @@
 				<div class="two columns">
 					<button class="wide" ng-click="toggleActivePanel('sms')" ng-class="{selected:isActivePanel('sms')}">Text</button>
 				</div>
-				<div class="two columns">
-					<button class="wide" ng-show="issetup" ng-click="toggleActivePanel('goal')" ng-class="{selected:isActivePanel('goal')}">Goals</button>
+				<div class="two columns" ng-show="issetup && !isIvrmode">
+					<button class="wide" ng-click="toggleActivePanel('goal')" ng-class="{selected:isActivePanel('goal')}">Goals</button>
+					&nbsp;
+				</div>
+				<div class="two columns" ng-show="issetup && isIvrmode" >
+					<button class="wide" ng-click="toggleActivePanel('ivr')" ng-class="{selected:isActivePanel('ivr')}">IVR</button>
 					&nbsp;
 				</div>
 				<div class="two columns">
@@ -89,7 +93,7 @@
 				&nbsp;
 				</div>	
 			</div>
-			<div class="row" ng-show="!isActivePanel('goal') && !isActivePanel('settings')">
+			<div class="row" ng-show="!isActivePanel('goal') && !isActivePanel('ivr') && !isActivePanel('settings')">
 				<div class="six columns region">
 				
 					<input ng-model="query" style="width:99%;" placeholder="All devices">
@@ -271,7 +275,7 @@
 				</div>
 			
 			</div>
-			<div class="row" ng-show="isActivePanel('goal') || isActivePanel('settings')">
+			<div class="row" ng-show="isActivePanel('goal') || isActivePanel('ivr') || isActivePanel('settings')">
 				<div class="twelve columns region">
 				
 				
@@ -356,10 +360,20 @@
 						</div>	
 						
 					</div>
+					
+					
+	
+					<div ng-show="isActivePanel('ivr')">
+						<h4>Interactive Voice Response</h4>
+					</div>
+					
+					
+					
 					<div ng-show="isActivePanel('settings')">
 						<h4>System settings</h4>
 						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices. This cannot be undone.<br/>					
 						<button ng-click="setupMode()" ng-class="{selected: issetup}">Setup</button>&nbsp;Show additional controls in the UI for setup before the performance<br/>
+						<button ng-click="ivrMode()" ng-class="{selected: isIvrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu for automation<br/>
 						<button ng-click="logoff()">Logoff</button>&nbsp;Log off from the console
 					</div>
 				</div>

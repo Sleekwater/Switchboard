@@ -27,6 +27,7 @@ import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
+import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Text;
 import org.sleekwater.switchboard.Texts;
@@ -232,6 +233,18 @@ public class ClientWebsocketServlet {
 			if (null != register)
 			{
 				Devices.d.add(register.getString("number"),"console");
+			}
+			
+			// IVR commands from the console			
+			JsonObject saveivrstep = o.getJsonObject("saveivrstep");
+			if (null != saveivrstep)
+			{
+				IvrSteps.i.add(saveivrstep).saveToDisk();
+			}
+			JsonObject deleteivrstep = o.getJsonObject("deleteivrstep");
+			if (null != deleteivrstep)
+			{
+				IvrSteps.i.remove(deleteivrstep.getString("name"));
 			}
 	
 		}
