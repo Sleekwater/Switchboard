@@ -46,7 +46,7 @@ public final class Audios {
 				else if (!listOfFiles[i].isFile())
 				{
 					// Create an entry for this folder itself
-					this.add(listOfFiles[i].getPath(), listOfFiles[i].getName(), "", true);
+					this.add(listOfFiles[i].getPath(), listOfFiles[i].getName(), folderName, true);
 					// Recurse into this folder
 					parseFolderR(listOfFiles[i], listOfFiles[i].getName());
 				}

@@ -219,17 +219,25 @@
 						<button ng-click = "broadcastAudio()" ng-class="{go:getNumIdleOrRingDevicesSelected() > 0 && activeAudio}">Call {{getNumIdleOrRingDevicesSelected()}}</button>
 					
 						<div>
-						<img src="images/folder.png"/> <input ng-model="currentAudioFolder" ng-init="currentAudioFolder=''" style="width:25%;margin:10px;" placeholder=""/>
-						<button ng-show="currentAudioFolder!=''" ng-click = "currentAudioFolder=''"/>Up<br/>
+						  <span ng-model="currentAudioFolder" ng-init="currentAudioFolder=''" >
+						  	  <img src="images/folder.png"/> 
+							  <span style="font-size:25px; color:#aaa; ">{{currentAudioFolder}}</span>
+						  </span>
+							<button ng-show="currentAudioFolder!=''" ng-click = "currentAudioFolder=''">Up</button>
+							<button ng-show="issetup" ng-click = "addAudioMode=true">+</button>
+							<div ng-show="addAudioMode">
+							 	<input ng-model="addAudioFolder" style="width:80%;margin:10px;" placeholder="New directory name">
+								<button ng-click = "addAudioFolderButton(addAudioFolder); addAudioMode=false;"/>+<br/>			 	
+							</div>
 						</div>
 						<ul style="overflow-y: scroll; height:600px">
-							<li ng-show="audio.folder==currentAudioFolder" style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquery | orderBy:'name'" ng-click="selectAudio(audio)" ng-class="{selected:audio.name == activeAudio.name}">
+							<li ng-show="audio.folder==currentAudioFolder || audioquery.length > 0" style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquery | orderBy:'name'" ng-click="selectAudio(audio)" ng-class="{selected:audio.name == activeAudio.name}">
 								<span ng-show="audio.isFolder" ng-click='enterAudioFolder(audio)'><img src="images/folder.png"/></span>
 								<span>{{audio.name}}</span>
-								<span style="float:right;" ng-show="issetup && !audio.isFolder" ng-click="deleteAudio(audio)">Delete</span>
+								<span style="color:#aaa; margin-left:20px; font-size:smaller" ng-show="audioquery.length > 0 && audio.folder.length>0">(in <img src="images/folder.png"/>{{audio.folder}} )</span>
+								<span style="float:right;" ng-show="issetup" ng-click="deleteAudio(audio)">Delete</span>
 							</li>
-						</ul>
-						
+						</ul>						
 					</div>
 					
 					<div ng-show="isActivePanel('sms')">

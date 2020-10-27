@@ -212,6 +212,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	{
 		$scope.notifyService.ping('{"deleteaudio":{"name":"' + audio.name + '", "folder":"' + audio.folder + '"}}')
 	}
+	
+	$scope.addAudioFolderButton = function(foldername)
+	{
+		$scope.notifyService.ping('{"addfolder":{"name":"' + foldername + '", "folder":"' + $scope.currentAudioFolder + '"}}')
+	}
 	$scope.enterAudioFolder = function(audio)
 	{
 		$scope.currentAudioFolder = audio.name;

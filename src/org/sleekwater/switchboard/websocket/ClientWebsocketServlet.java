@@ -1,5 +1,6 @@
 package org.sleekwater.switchboard.websocket;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Random;
@@ -13,6 +14,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
+import javax.servlet.ServletException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -25,6 +27,7 @@ import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
+import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Text;
 import org.sleekwater.switchboard.Texts;
 
@@ -100,6 +103,27 @@ public class ClientWebsocketServlet {
 			{
 				// remove this audio
 				Audios.a.remove(deleteaudio.getString("name"));
+			}
+			JsonObject addaudiofolder = o.getJsonObject("addfolder");
+			if (null != addaudiofolder)
+			{
+				// Create a folder on disk
+		        String folder = addaudiofolder.getString("folder");
+		        String newName = addaudiofolder.getString("name");
+		        File uploads = new File(Settings.s.uploadDiskPath + "/" + (folder.length()==0?"" : folder + "/") + newName);
+		        // Prevent traversals
+		        if (!uploads.getParentFile().toPath().startsWith(new File(Settings.s.uploadDiskPath).toPath()))
+		        {
+		        	// Naughty!
+		        	throw new ServletException("Cannot save to " + uploads.getParentFile().toPath());        	
+		        }
+		        // Create the folder if necessary
+		        if (!uploads.exists())
+		        {
+		        	uploads.mkdirs();
+		        }
+		        // And tell everyone about it...
+				Audios.a.add(uploads.toString(), newName, folder, true);
 			}
 			JsonObject playaudio = o.getJsonObject("playaudio");
 			if (null != playaudio)
