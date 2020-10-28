@@ -25,6 +25,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	$scope.audios = NotifyService.audios;
 	$scope.texts= NotifyService.texts;
 	$scope.goals = NotifyService.goals;
+	$scope.ivrsteps = NotifyService.ivrsteps;
 	$scope.errormessage = NotifyService.errormessage;
 
 	$scope.notifyService = NotifyService;
@@ -586,5 +587,116 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	$scope.removeErrorMessage = function(index)
 	{
 		$scope.errormessage.splice(index, 1)
+	}
+	
+	/** Ivrsteps ***/
+	$scope.addIvrstep = function(){
+		var newIvrstep = {}
+		newIvrstep.name = "";
+		newIvrstep.audio="";
+		newIvrstep.state="IDLE";
+		newIvrstep.keys = [];
+		$scope.ivrsteps.push(newIvrstep)
+		$scope.activeIvrstep = newIvrstep;
+	}
+
+	$scope.selectIvrstep = function(ivrstep)
+	{
+		$scope.activeIvrstep=ivrstep    	  
+		//console.log("selected " + goal.name)
+	}
+	$scope.deleteIvrstep = function(ivrstep)
+	{
+		$scope.notifyService.ping('{"deleteivrstep":{"name":"' + ivrstep.name + '"}}')
+	}
+
+	// We always save the active ivrstep
+	$scope.saveIvrstep = function()
+	{	
+		$scope.notifyService.ping('{"saveivrstep":' + JSON.stringify($scope.activeIvrstep) + '}')
+	}
+	
+	$scope.addIvrstepKey = function(ivrstep)
+	{
+		ivrstep.keys.push({'key':'','target':''});
+	}
+	$scope.deleteIvrstepKey= function(ivrstep, index)
+	{
+		ivrstep.keys.splice(index, 1)
+	}
+	$scope.describeIvrstep = function(ivrstep)
+	{
+		// Special cases
+		if (ivrstep.name =="resume")
+			return "resume: Resume the call from the last place reached in the IVR menu";
+		if (ivrstep.name =="callback")
+			return "callback: Drop this call and start a new call to the device";
+		
+		var src = "";
+		if (ivrstep.name.length>0) {
+			src += ivrstep.name + ":";
+		}
+		else {
+			src += "<unnamed step>" + ":";
+		}
+		
+			
+			
+		try{
+			if (ivrstep.audio) {
+				src += " plays";
+				if (ivrstep.audio)
+				{
+					if (ivrstep.audio.isFolder){
+						src += " a random audio from folder '" + ivrstep.audio.name + "'";
+					}
+					else {
+						src += " audio '" + ivrstep.audio.name + "'";
+					}
+				}
+				else
+				{
+					src += " <no audio selected>"
+				}
+			}
+			else{
+				src += " does nothing"
+			}
+		}
+		catch (err){}
+
+		// List keys
+		try{
+			if (ivrstep.keys.length == 0)
+			{
+				src += " then end the call";
+			}
+			else
+			{
+				src += " then map key";
+				if (ivrstep.keys.length>1) src += "s";
+				for(var i = 0; i < ivrstep.keys.length; i++){
+					var key = ivrstep.keys[i];
+					if (i>0)
+						src += ", ";
+					if (key.key){
+						src += " [" + key.key +"] "
+					}
+					else {
+						src += " [<key not set>] "
+					}
+						
+					src += " -> ";
+					if (key.target){
+						src += " '" + key.target +"' "
+					}
+					else {
+						src += " <step not set> "
+					}
+				}
+			}
+		}
+		catch (err){}
+		return src;
 	}
 });

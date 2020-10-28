@@ -230,8 +230,9 @@
 							<button ng-show="currentAudioFolder!=''" ng-click = "currentAudioFolder=''">Up</button>
 							<button ng-show="issetup" ng-click = "addAudioMode=true">+</button>
 							<div ng-show="addAudioMode">
-							 	<input ng-model="addAudioFolder" style="width:80%;margin:10px;" placeholder="New directory name">
-								<button ng-click = "addAudioFolderButton(addAudioFolder); addAudioMode=false;"/>+<br/>			 	
+							 	<input ng-model="addAudioFolder" style="width:70%;margin:10px;" placeholder="New directory name">
+								<button ng-click = "addAudioFolderButton(addAudioFolder); addAudioMode=false;"/>OK<br/>
+								<button ng-click = "addAudioMode=false;"/>Cancel</button>			 	
 							</div>
 						</div>
 						<ul style="overflow-y: scroll; height:600px">
@@ -365,7 +366,51 @@
 	
 					<div ng-show="isActivePanel('ivr')">
 						<h4>Interactive Voice Response</h4>
+						
+						<button ng-click="addIvrstep()">Add</button>					
+						
+						<ul style="overflow-y: scroll; height:300px">
+							<li style="overflow: hidden;" ng-repeat="ivrstep in ivrsteps track by ivrstep.name" ng-click="selectIvrstep(ivrstep)" ng-class="{selected:ivrstep.name == activeIvrstep.name}">
+								<span>{{describeIvrstep(ivrstep)}}</span>
+								<span style="float:right;" ng-show="ivrstep.name != 'start' && ivrstep.name != 'callback' && ivrstep.name != 'resume'" ng-click="deleteIvrstep(ivrstep)">Delete</span>
+							</li>
+						</ul>
+						
+						<!-- Ivr detail panel -->
+						<div class="row region"  ng-show="activeIvrstep && activeIvrstep.name != 'resume' && activeIvrstep.name != 'callback'">
+							<button ng-click="saveIvrstep()" class="go" style="float:right">Save</button>						
+							<input ng-model="activeIvrstep.name" style="width:90%;margin:10px;" placeholder="Step name">
+							<div class="four columns">
+								<input ng-model="audioqueryivrstepsrc" style="width:90%;margin:10px;" placeholder="All audio files">
+								<ul style="overflow-y: scroll; height:300px">
+									<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioqueryivrstepsrc | orderBy:'name'" ng-click="activeIvrstep.audio=audio" 
+									ng-class="{selected:audio.name == activeIvrstep.audio.name}">
+										<img ng-show="audio.isFolder" src="images/folder.png"/></span><span>{{audio.name}}</span>
+									</li>
+								</ul>
+							</div>	
+							<div class="six columns">
+								
+								Key mappings: <button ng-click="addIvrstepKey(activeIvrstep)" class="go" >Add</button>
+								<ul style="overflow-y: scroll; height:300px">
+									<li style="overflow: hidden;" ng-repeat="key in activeIvrstep.keys track by $index ">
+										<input ng-model="key.key" style="width:100px; font-size:1em;"> ->
+										<input ng-model="key.target" style="font-size:1em;">
+										<button ng-click="deleteIvrstepKey(activeIvrstep, $index)" class="go" >Delete</button>
+									</li>
+								</ul>
+							</div>	
+											
+						</div>	
+						<!--  special detail cases -->						
+						<div class="row region"  ng-show="activeIvrstep && activeIvrstep.name == 'resume'">
+							<h4>Resume the call from the last place reached in the IVR menu</h4>
+						</div>
+						<div class="row region"  ng-show="activeIvrstep && activeIvrstep.name == 'callback'">
+							<h4>Drop this call and start a new call to the device</h4>
+						</div>
 					</div>
+					
 					
 					
 					

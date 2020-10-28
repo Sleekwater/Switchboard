@@ -18,6 +18,7 @@ import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
+import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Texts;
 
 /**
@@ -112,6 +113,13 @@ public class SocketSessionHandler {
         // And goals
         List<String> goalState = Goals.g.getall();
         for (String s : goalState)
+        {
+        	session.getBasicRemote().sendText(s);
+        }
+        
+        // And ivrsteps
+        List<String> ivrStep = IvrSteps.i.getall();
+        for (String s : ivrStep)
         {
         	session.getBasicRemote().sendText(s);
         }

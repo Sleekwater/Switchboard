@@ -35,6 +35,7 @@ public class IvrSteps {
 	public static IvrSteps i = new IvrSteps();
 	private static HashMap<String, IvrStep> ivrs= new HashMap<String, IvrStep>();
 
+
 	/**
 	 * Init reads any existing files from disk - called from the FileUpload servlet 
 	 * - so we know what files are already present when the server restarts
@@ -102,7 +103,9 @@ public class IvrSteps {
             JsonReader jsonReader = Json.createReader(br);
             JsonObject object = jsonReader.readObject();
             jsonReader.close();
-            add(object);
+    		// We always have a wrapper so we know the object type - this is useful in the UI
+    		JsonObject o = object.getJsonObject("ivrstep");
+            add(o);
             
         } catch (IOException e) {
             System.err.format("IOException: %s%n", e);
@@ -142,6 +145,7 @@ public class IvrSteps {
 				File f = new File(Settings.s.uploadDiskPath + "/" + ivrStep.getName() + ".ivr");
 				if (null != f)
 					f.delete();		
+				ivrStep.state = IvrState.REMOVED;
 				ivrStep.broadcastChange("remove");
 				ivrs.remove(name);
 				return true;

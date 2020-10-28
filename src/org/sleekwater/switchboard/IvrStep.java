@@ -18,19 +18,21 @@ public class IvrStep {
 	private String name;
 	JsonObject audio;
 	HashMap<String, String> keys = new HashMap<String, String>();
+	public IvrState state = IvrState.IDLE;	
 	
-	// Parse the JSON into our object for ease of use; this is the reverse of toJson
-	public IvrStep(JsonObject json)
+	// Parse the JSON into our object for ease of use; this is the reverse of toJson, except we've already stripped off the outer ivrstep level
+	public IvrStep(JsonObject o)
 	{
-		// We always have a wrapper so we know the object type
-		JsonObject o = json.getJsonObject("ivrstep");
+
 		this.setName(o.getString("name"));
 		this.audio = o.getJsonObject("audio");
+		this.state = IvrState.IDLE;
 		JsonArray arr = o.getJsonArray("keys");
 		for (int i=0; i< arr.size(); i++)
 		{
-			String key = arr.getString(i, "key");
-			String target = arr.getString(i, "target");
+			JsonObject entry = arr.getJsonObject(i);
+			String key = entry.getString("key");
+			String target = entry.getString("target");
 			keys.put(key, target);
 		}		
 	}
@@ -57,7 +59,8 @@ public class IvrStep {
 		message.add("ivrstep", Json.createObjectBuilder()
 		         .add("name", getName())
 		         .add("audio", audio)
-		         .add("keys", keyBuilder));
+		         .add("keys", keyBuilder)
+		         .add("state", state.toString()));
 	}
 	
 	public void broadcastChange(String event)

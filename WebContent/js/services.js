@@ -220,6 +220,33 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 					}
 				}
 				
+				if (data.ivrstep)
+				{
+					console.log("Got an ivrstep event, " + Service.ivrsteps.length);
+					// Do I already have this? Search by name...
+					var arrayLength = Service.ivrsteps.length;
+					var found = -1;
+					for (var i = 0; i < arrayLength; i++) {
+						if (Service.ivrsteps[i].name== data.ivrstep.name)
+						{
+							found = i;
+							break;
+						}
+					}
+					if (found == -1)
+					{
+						if (data.ivrstep.state!='REMOVED')
+							Service.ivrsteps.push(data.ivrstep);
+					}
+					else {
+						// Update existing. I do this so that I maintain array order
+						if (data.ivrstep.state=='REMOVED')
+							Service.ivrsteps.splice(found, 1);
+						else 
+							Service.ivrsteps[found] = data.ivrstep;						
+					}
+				}
+				
 				if (data.error)
 				{
 					console.log("Got error: " + data.error);
@@ -257,6 +284,8 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	Service.texts = [];
 	// The goal objects that can be edited
 	Service.goals = [];
+	// The ivrstep objects that make up our IVR menu
+	Service.ivrsteps = [];
 	// What are we autoselecting?
 	Service.activeAuto="";
 	Service.activeText="";
