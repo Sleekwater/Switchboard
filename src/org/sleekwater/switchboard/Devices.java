@@ -167,7 +167,9 @@ public final class Devices {
 	// Note that this is no longer synchronized
 	public Device get(String number) {
 		System.out.println("About to get device " + number);
-		return devices.get(number);
+		Device d= devices.get(number);
+		System.out.println("Got device " + d);
+		return d;
 	}
 
 

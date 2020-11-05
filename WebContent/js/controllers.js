@@ -71,6 +71,8 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	$scope.isIvrmode = true;	
 	$scope.ivrMode = function() {
 		$scope.isIvrmode = !$scope.isIvrmode;
+		// Tell the server, as different things happen based on this
+		$scope.notifyService.ping('{"setting":{"ivrmode":"' + $scope.ivrmode + '"}}')
 	}
 
 

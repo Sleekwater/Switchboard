@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
+import org.sleekwater.switchboard.Settings;
+import org.sleekwater.switchboard.Switchboard;
 
 /**
  * Servlet implementation class Register
@@ -48,8 +50,14 @@ public class Register extends HttpServlet {
 				if (null == plivoXML)
 					plivoXML = "<Speak voice=\"WOMAN\">Welcome, and thank you for registering. Press 9 to cancel at any time. "
 						+ "You will be unregistered automatically at the end of the performance.</Speak>";
+				if (Switchboard.s.isIVR)
+				{
+					// drop straight into the Ivr system after registration, as it's too fiddly to have to ring up twice.
+					plivoXML = "<Speak voice=\"WOMAN\">Welcome, and thank you for registering. The performance will start in just a few moments, please wait. </Speak>"
+							+ "<Redirect>"+ Settings.s.callbackUrl + "Answer/Ivr</Redirect>";
+				}
 				
-				// Tell plivo that we're done
+				// Tell plivo what to do
 				xml = "<Response>"
 						+ plivoXML
 						+ "</Response>";
@@ -60,8 +68,7 @@ public class Register extends HttpServlet {
 						+ "<Speak voice=\"WOMAN\">Sorry, you must press 1 on your keypad to register for the performance. Please try again."
 						+ "</Speak>"
 						+ "</Response>";
-			}
-			
+			}			
 		}
 
 		

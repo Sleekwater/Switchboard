@@ -163,6 +163,30 @@ public class IvrSteps {
 			}			
 			ivrs.clear();
 		}
+	}
+
+	/**
+	 * Given a device, find out which step it's currently on
+	 * @param device
+	 * @return
+	 */
+	public IvrStep getStep(Device device) {
+		
+		IvrStep i = null;
+		if (null == device)
+			i = ivrs.get("start");
+		else
+		{
+			if (ivrs.containsKey(device.progress))
+			{
+				i=ivrs.get(device.progress);
+			}
+			// If not known, default to start
+			i= ivrs.get("start");
+		}
+		
+		System.out.println("getStep is " + i);
+		return i;
 	}	
 
 

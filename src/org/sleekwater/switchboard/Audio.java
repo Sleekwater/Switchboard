@@ -1,6 +1,7 @@
 package org.sleekwater.switchboard;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
@@ -17,6 +18,24 @@ public class Audio {
 	public Boolean isFolder = false;
 	public AudioState state = AudioState.IDLE;
 	
+	
+	/**
+	 * Create a blank audio object so it can be populated manually
+	 */
+	public Audio()
+	{		
+	}
+	
+	/**
+	 * Create an audio object from Json - this is roughly the opposite of toJson
+	 */
+	public Audio(JsonObject o)
+	{
+		 this.state = AudioState.IDLE;
+		 this.name = o.getString("name");
+		 this.folder = o.getString("folder");
+         this.isFolder = o.getBoolean("isFolder");
+	}
 	
 	// return a publicly-accessible URL to this audio, so that Plivo can read it...
 	public String getUrl()

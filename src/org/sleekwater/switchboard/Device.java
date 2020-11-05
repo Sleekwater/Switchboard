@@ -44,6 +44,8 @@ public class Device {
 
 	// What our current progress tracker is...
 	public String progress = "";
+	// Keep a history of progress so we can reliably go back to the previous step
+	private List<String> history = new ArrayList<String>();
 	// Do we have any recordings? (voicemails)
 	public List<Recording> recordings = new ArrayList<Recording>();
 
@@ -97,6 +99,22 @@ public class Device {
 				.add("cue", cueBuilder)
 				.add("direct", session != null));
 			
+	}
+	
+	/**
+	 * Called whenever we change the step in an IVR menu, so that we can remember where this device has got to (for resume) and 
+	 * keep a history of steps (so we can go back)
+	 * @param newStep
+	 */
+	public void updateIvrProgress(IvrStep newStep)
+	{
+		if (!this.progress.equals(newStep.name))
+		{
+			this.progress = newStep.name;
+			this.history.add(newStep.name);
+			addAudit("Ivr step reached: " + newStep.name);
+			broadcastChange("audit");
+		}
 	}
 
 	public void broadcastChange(String event)

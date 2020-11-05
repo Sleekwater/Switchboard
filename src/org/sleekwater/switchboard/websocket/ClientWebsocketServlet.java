@@ -29,6 +29,7 @@ import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
 import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Settings;
+import org.sleekwater.switchboard.Switchboard;
 import org.sleekwater.switchboard.Text;
 import org.sleekwater.switchboard.Texts;
 
@@ -245,6 +246,13 @@ public class ClientWebsocketServlet {
 			if (null != deleteivrstep)
 			{
 				IvrSteps.i.remove(deleteivrstep.getString("name"));
+			}
+			// System-wide settings
+			JsonObject setting = o.getJsonObject("setting");
+			if (null != setting)
+			{
+				if (setting.containsKey("ivrmode"))
+					Switchboard.s.isIVR = (setting.getBoolean("ivrmode"));
 			}
 	
 		}

@@ -1,65 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app version="3.0"
-  xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
     http://java.sun.com/xml/ns/javaee
     http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-    <display-name>Switchboard</display-name>
-    <description>
+	<display-name>Switchboard</display-name>
+	<description>
         This is a web application to manage phone calls during a theatre performance. See https://github.com/Sleekwater/Switchboard for details.
     </description>
 
 	<!-- You can upload files (text and audio) when getting ready for the performance. 
-		These files need to be saved somewhere - and this is the directory that they are saved in.
-		You're unlikely to need to change this -->
+		These files need to be saved somewhere - and this is the directory that they 
+		are saved in. You're unlikely to need to change this -->
 	<context-param>
 		<param-name>upload.location</param-name>
 		<param-value>upload</param-value>
 	</context-param>
-	
-	<!-- This should be the PUBLIC base URL of where this J2E app is hosted, ending with a / 
-		This is the same as what you type into your web browser to access the app.
-		So, if you're running on a server with an IP address a.b.c.d, and the app is deployed under "Switchboard"
-		then this url would be
-		http://a.b.c.d/Switchboard/
-		If you've got a DNS name then use that instead of the IP address - i.e.
-		http://dns.name/Switchboard/
-		This server *must* be publicly available, as it is used by Plivo to call back and notify when something is going on.
-		If you want to whitelist then Plivo publishes a list of their server IP's on their website.
-		-->
+
+	<!-- This should be the PUBLIC base URL of where this J2E app is hosted, 
+		ending with a / This is the same as what you type into your web browser to 
+		access the app. So, if you're running on a server with an IP address a.b.c.d, 
+		and the app is deployed under "Switchboard" then this url would be http://a.b.c.d/Switchboard/ 
+		If you've got a DNS name then use that instead of the IP address - i.e. http://dns.name/Switchboard/ 
+		This server *must* be publicly available, as it is used by Plivo to call 
+		back and notify when something is going on. If you want to whitelist then 
+		Plivo publishes a list of their server IP's on their website. -->
 	<context-param>
 		<param-name>callback.url</param-name>
-		<param-value>http://a.b.c.d/Switchboard/</param-value>
+		<param-value>http://sleekwater.co.uk:8080/Switchboard/</param-value>
 	</context-param>
 
-	<!-- We use Plivo for all the phone handling. 
-		Since the code is talking to the Plivo API, I have to have a valid Plivo auth_id to be permitted to initiate calls and the like.
-		Get this from the Plivo UI here: https://manage.plivo.com/dashboard/ -->
+	<!-- We use Plivo for all the phone handling. Since the code is talking 
+		to the Plivo API, I have to have a valid Plivo auth_id to be permitted to 
+		initiate calls and the like. Get this from the Plivo UI here: https://manage.plivo.com/dashboard/ -->
 	<context-param>
 		<param-name>plivo.auth_id</param-name>
-		<param-value>PLIVO_AUTH_ID</param-value>
-	</context-param>
-	
-	<!-- We use Plivo for all the phone handling. 
-		The Plivo auth_id requires a matching auth_token
-		Get this from the Plivo UI here: https://manage.plivo.com/dashboard/ -->
-	<context-param>
-		<param-name>plivo.auth_token</param-name>
-		<param-value>PLIVO_AUTH_TOKEN</param-value>
+		<param-value>MAOTMWNDE1ZMI1ZDC4NM</param-value>
 	</context-param>
 
-	<!-- This is the phone number that you've registered with Plivo for the switchboard.
-		Technically I should be able to get this from the Plivo API, but it's much easier just to encode it here.
-		This number is what all outbound calls will be initiated from 
-		- i.e. it's the number that will show up on the recipient's phone.
-		This number must start with the correct international dialling code 
-		- so if your registered Plivo number is +44 (0)1234 567890 then put 441234567890 here -->
+	<!-- We use Plivo for all the phone handling. The Plivo auth_id requires 
+		a matching auth_token Get this from the Plivo UI here: https://manage.plivo.com/dashboard/ -->
+	<context-param>
+		<param-name>plivo.auth_token</param-name>
+		<param-value>N2UzNzc5NWU2ZGUwMmU0Yjg2N2RiNGQ1YWU4NWQ3</param-value>
+	</context-param>
+
+	<!-- This is the phone number that you've registered with Plivo for the 
+		switchboard. Technically I should be able to get this from the Plivo API, 
+		but it's much easier just to encode it here. This number is what all outbound 
+		calls will be initiated from - i.e. it's the number that will show up on 
+		the recipient's phone. This number must start with the correct international 
+		dialling code - so if your registered Plivo number is +44 (0)1234 567890 
+		then put 441234567890 here -->
 	<context-param>
 		<param-name>plivo.registerednumber</param-name>
-		<param-value>441234567890</param-value>
+		<param-value>447782961981</param-value>
 	</context-param>
 
 
