@@ -68,10 +68,22 @@ public class Ivr extends HttpServlet {
 			
 			if (null != nextStep)
 			{
-				xml = "<Response>"
-					+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-					+ "<Play loop=\"0\">" + nextStep.getAudioPath(d) +"</Play>"
-					+ "</GetDigits></Response>";
+				if (nextStep.endsCall())
+				{
+					xml = "<Response>"
+							+ "<Play loop=\"0\">" + nextStep.getAudioPath(d) +"</Play>"
+							+ "<Hangup/>"
+							+ "</Response>";
+				}
+				else
+				{
+					xml = "<Response>"
+						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
+						+ "<Play loop=\"0\">" + nextStep.getAudioPath(d) +"</Play>"
+						+ "</GetDigits>"
+						+ "</Response>";
+				}
+				
 				// Remember where we are, so that the next callback will go to the right place in the menu system
 				if (null != d)
 				{

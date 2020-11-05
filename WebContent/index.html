@@ -367,10 +367,12 @@
 					<div ng-show="isActivePanel('ivr')">
 						<h4>Interactive Voice Response</h4>
 						
-						<button ng-click="addIvrstep()">Add</button>					
+						<button ng-click="addIvrstep()">Add</button>	
+						<input ng-model="queryivrstepsrc" style="width:90%;margin:10px;" placeholder="Filter ivr steps">				
 						
 						<ul style="overflow-y: scroll; height:300px">
-							<li style="overflow: hidden;" ng-repeat="ivrstep in ivrsteps track by ivrstep.name" ng-click="selectIvrstep(ivrstep)" ng-class="{selected:ivrstep.name == activeIvrstep.name}">
+							<li style="overflow: hidden;" ng-repeat="ivrstep in ivrsteps | filter:queryivrstepsrc | orderBy:'name'" ng-click="selectIvrstep(ivrstep)" ng-class="{selected:ivrstep.name == activeIvrstep.name}">
+								<span ng-show="ivrstep.hasError"><img src="images/warning.png" title="{{ivrstep.error}}" alt="{{ivrstep.error}}"/></span>
 								<span>{{describeIvrstep(ivrstep)}}</span>
 								<span style="float:right;" ng-show="ivrstep.name != 'start' && ivrstep.name != 'callback' && ivrstep.name != 'resume'" ng-click="deleteIvrstep(ivrstep)">Delete</span>
 							</li>

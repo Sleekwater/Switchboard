@@ -141,13 +141,16 @@ public final class Audios {
 	 */
 	public Audio getRandomChild(Audio folder, Device d)
 	{
+		System.out.println("Getting random child of : " + folder + " for device " + d);
+
 		List<Audio> children = new ArrayList<Audio>();
 		synchronized(audios)
 		{
 			for (Audio a : audios.values())
 			{
-				if (a.isFolder.equals(folder.name)) {
+				if (a.folder.equals(folder.name)) {
 					children.add(a);
+					System.out.println("Child is: " + a.name);
 				}
 			}
 		}
@@ -158,21 +161,25 @@ public final class Audios {
 		{
 			if (!d.playedAudios.contains(a)) {
 				unplayed.add(a);
+				System.out.println("Unplayed is: " + a.name);
 			}
 		}
 		
 		// Have we got any eligable results?
+		Audio r = null;
 		if (unplayed.size() > 0)
 		{
 			// Pick a random one
 			int randomNum = ThreadLocalRandom.current().nextInt(0, unplayed.size());
-			return unplayed.get(randomNum);
+			 r = unplayed.get(randomNum);
 		}
 		else
 		{
 			// Pick one we've heard before
 			int randomNum = ThreadLocalRandom.current().nextInt(0, children.size());
-			return children.get(randomNum);
+			r = children.get(randomNum);
 		}
+		System.out.println("Returning audio: " + r);
+		return r;
 	}
 }

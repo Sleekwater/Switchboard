@@ -94,6 +94,15 @@ public class Answer extends HttpServlet {
 				// Get the current step in the IVR from the device
 				Device d = Devices.d.get(from);
 				IvrStep currentStep = IvrSteps.i.getStep(d);
+				// Have we finished (and are restarting?)
+				if (currentStep.endsCall())
+				{
+					currentStep = IvrSteps.i.getStep("start");
+				}
+				if (null != d)
+				{
+					d.updateIvrProgress(currentStep);					
+				}
 				// And point plivo to audio I want to play
 				url +="/Ivr";					
 				xml = "<Response>"

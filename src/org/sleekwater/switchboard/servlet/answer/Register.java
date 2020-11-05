@@ -33,11 +33,18 @@ public class Register extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		System.out.println("Answer/Register/POST");
 		String from = request.getParameter("From");
 		String xml = "<Response><Speak voice=\"WOMAN\">Sorry, there has been an error.</Speak></Response>";
 		String url = request.getRequestURL().toString() + "/Unregister";
-		String digits = request.getParameter("Digits");
+		String digits = "";
+		try
+		{
+			digits = request.getParameter("Digits");
+			if (null == digits)
+				digits="";
+		}
+		catch (Exception e) {} // No digits, carry on
 		
 		// Are we registering - we should be...
 		if (!Devices.d.exists(from))
@@ -71,7 +78,7 @@ public class Register extends HttpServlet {
 			}			
 		}
 
-		
+		System.out.println("Plivo XML is : " + xml);
 		response.getWriter().write(xml);
 		response.addHeader("content-type", "application/xml");
 

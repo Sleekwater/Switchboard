@@ -179,15 +179,28 @@ public class IvrSteps {
 		{
 			if (ivrs.containsKey(device.progress))
 			{
+				// We're in the menu somewhere...
 				i=ivrs.get(device.progress);
 			}
-			// If not known, default to start
-			i= ivrs.get("start");
+			else
+			{
+				// If not known, default to start
+				i= ivrs.get("start");
+			}
 		}
 		
-		System.out.println("getStep is " + i);
 		return i;
 	}	
+	
+	/**
+	 * Get a step by name, or null if there is no step called this
+	 * @param name
+	 * @return
+	 */
+	public IvrStep getStep(String name)
+	{
+		return ivrs.get("name");
+	}
 
 
 }

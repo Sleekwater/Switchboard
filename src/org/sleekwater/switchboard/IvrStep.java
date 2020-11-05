@@ -46,6 +46,17 @@ public class IvrStep {
 		}
 	}
 	
+	/**
+	 * Should we end the call after speaking the audio for this step?
+	 * @return
+	 */
+	public boolean endsCall()
+	{
+		if (keys.size() == 0)
+			return true;
+		return false;
+	}
+	
 	@Override
 	public String toString()
 	{
@@ -65,11 +76,49 @@ public class IvrStep {
 	         .add("target", keys.get(key)));
 		}
 
-		message.add("ivrstep", Json.createObjectBuilder()
+		JsonObjectBuilder ivrstep = Json.createObjectBuilder()
 		         .add("name", getName())
 		         .add("audio", audio)
 		         .add("keys", keyBuilder)
-		         .add("state", state.toString()));
+		         .add("state", state.toString());
+		
+		String errorMsg = validate();
+		if (errorMsg.length() > 0)
+			ivrstep.add("hasError", true).add("error", errorMsg);
+		
+		message.add("ivrstep", ivrstep);
+	}
+	
+	/**
+	 * Return a string saying why this step is not valid, or blank if it's all OK
+	 * @return
+	 */
+	private String validate()
+	{
+		String result = "";
+		if (null == this.name || this.name.length() == 0) {
+			result += "Name not set";
+		}
+		if (audio.size()==0)
+		{
+			result += " Audio not set";
+		}
+		for (String key : keys.keySet())
+		{
+			if (key.length() == 0)
+			{
+				result += " key not set";
+			}
+			else
+			{
+				String target = keys.get(key);
+				if (null == IvrSteps.i.get(target))
+				{
+					result += " step '" + target + "' does not exist for key " + key;
+				}
+			}
+		}
+		return result;
 	}
 	
 	public void broadcastChange(String event)
@@ -111,7 +160,6 @@ public class IvrStep {
 		try
 		{
 			Audio a = new Audio(this.audio);
-			System.out.println("got audio path for ivr: " + a);
 			if (a.isFolder)
 			{
 				a = Audios.a.getRandomChild(a, d);
@@ -133,6 +181,13 @@ public class IvrStep {
 	 */
 	public IvrStep parseDigits(String digits) {
 		
+		if (null == digits || digits.length() == 0 && "start".equalsIgnoreCase(this.name))
+		{
+			// Do the start step if we're jumping straight to it
+			return this;
+		}
+		
+		// Move to the next step
 		if (keys.containsKey(digits))
 		{
 			String target = keys.get(digits);
