@@ -37,14 +37,14 @@
 		initiate calls and the like. Get this from the Plivo UI here: https://manage.plivo.com/dashboard/ -->
 	<context-param>
 		<param-name>plivo.auth_id</param-name>
-		<param-value>MAOTMWNDE1ZMI1ZDC4NM</param-value>
+		<param-value>your plivo auth id here</param-value>
 	</context-param>
 
 	<!-- We use Plivo for all the phone handling. The Plivo auth_id requires 
 		a matching auth_token Get this from the Plivo UI here: https://manage.plivo.com/dashboard/ -->
 	<context-param>
 		<param-name>plivo.auth_token</param-name>
-		<param-value>N2UzNzc5NWU2ZGUwMmU0Yjg2N2RiNGQ1YWU4NWQ3</param-value>
+		<param-value>your plivo auth token here</param-value>
 	</context-param>
 
 	<!-- This is the phone number that you've registered with Plivo for the 
