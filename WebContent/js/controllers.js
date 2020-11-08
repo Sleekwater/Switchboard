@@ -455,19 +455,34 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	}
 
 
-	$scope.uploadFile = function(){
-		var file = $scope.myFile;
+	/* User is uploading an individual file, which may be in a folder */
+	$scope.uploadAudioFile = function(){
+		var file = $scope.myAudioFile;
 
 		//console.log('file is ' );
 		//console.dir(file);
 
 		var uploadUrl = "./FileUpload?folder=" + $scope.currentAudioFolder;
 		$scope.fileUpload.uploadFileToUrl(file, uploadUrl);
-		$scope.myFile=null;
+		$scope.myAudioFile="";
 	};
 
-
-
+	/* User has specified a backup zipfile containing an entire performance, so upload it to the server */
+	$scope.uploadBackupFile = function(){
+		var file = $scope.myBackupFile;
+		if (file!="")
+		{
+			var uploadUrl = "./FileUpload?reset=true";
+			$scope.fileUpload.uploadFileToUrl(file, uploadUrl);
+			$scope.myBackupFile="";
+		}
+	};
+	
+	$scope.saveBackup = function () {
+		console.log("Backing up...")
+		window.location.assign('Backup');
+	};
+	
 	/* Do the Goal UI panel */
 	$scope.activeGoal = null;
 

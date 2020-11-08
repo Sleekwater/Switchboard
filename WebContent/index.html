@@ -149,7 +149,7 @@
 						<div>Phone or SMS the switchboard on <b>07782 961981</b></div>
 						<h4>{{consoles.length}} console<span ng-show="consoles.length != 1">s</span> connected</h4>
 						<li class="normal" style="overflow: hidden;" ng-repeat="console in consoles">
-							Console '<span>{{console.name}}</span>'
+							Console: '<span>{{console.name}}</span>'
 						</li>
 						This console is <span ng-show="connected()" class='noerror'>connected</span><span ng-show="!connected()" class='error'>not connected</span>
 						<h4>{{devices.length}} device<span ng-show="devices.length != 1">s</span> registered</h4>
@@ -157,9 +157,13 @@
 							{{getNumDevicesInState("CALL")}} being called<br/>
 							{{getNumDevicesInState("BUSY")}} busy with a message<br/>
 							{{getNumDevicesInState("IDLE")}} idle<br/>
-						<h4>{{audios.length}} audio file<span ng-show="audios.length != 1">s</span> available</h4>
-						<h4>{{texts.length}} text file<span ng-show="texts.length != 1">s</span> available</h4>
-						
+						<h4>Performance</h4>
+						{{audios.length}} audio file<span ng-show="audios.length != 1">s</span> available<br/>
+						{{texts.length}} text file<span ng-show="texts.length != 1">s</span> available<br/>
+						{{goals.length}} goal<span ng-show="goals.length != 1">s</span> available<br/>
+						<span ng-show="isIvrmode">
+							{{ivrsteps.length}} IVR step<span ng-show="ivrsteps.length != 1">s</span> available<br/>
+						</span>
 					</div>
 					
 					
@@ -217,7 +221,7 @@
 						
 						<div ng-show="issetup">
 							<h5>Upload a new audio file</h5>							
-							<input type = "file" file-model = "myFile"/><button ng-click = "uploadFile()">Upload</button>							
+							<input type = "file" file-model = "myAudioFile"/><button ng-click = "uploadAudioFile()">Upload</button>							
 						</div>
 						<input ng-model="audioquery" style="width:80%;margin:10px;" placeholder="{{audios.length}} audio files">	
 						<button ng-click = "broadcastAudio()" ng-class="{go:getNumIdleOrRingDevicesSelected() > 0 && activeAudio}">Call {{getNumIdleOrRingDevicesSelected()}}</button>
@@ -413,15 +417,17 @@
 						</div>
 					</div>
 					
-					
-					
-					
 					<div ng-show="isActivePanel('settings')">
 						<h4>System settings</h4>
-						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices. This cannot be undone.<br/>					
+						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices from the performance. This cannot be undone.<br/>					
 						<button ng-click="setupMode()" ng-class="{selected: issetup}">Setup</button>&nbsp;Show additional controls in the UI for setup before the performance<br/>
-						<button ng-click="ivrMode()" ng-class="{selected: isIvrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu for automation<br/>
+						<button ng-click="ivrMode()" ng-class="{selected: isIvrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu for automation, or use goals for automation<br/>
 						<button ng-click="logoff()">Logoff</button>&nbsp;Log off from the console
+						<h5>Backup and restore</h5>
+						<button ng-click="saveBackup()">Backup</button>&nbsp;Backup the current performance to a zipfile<br/>
+						Restore a performance from a zipfile. <b>This will erase the current performance.</b>
+						<br/><input type = "file" file-model = "myBackupFile"/>		
+						<button class="error" ng-show="myBackupFile" ng-click = "uploadBackupFile()">Restore</button>					
 					</div>
 				</div>
 			</div>	

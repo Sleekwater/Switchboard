@@ -38,9 +38,8 @@ public class SocketSessionHandler {
     public List<String> validAccounts = new ArrayList<String>();
 
     public SocketSessionHandler(){
-    	validAccounts.add(sha256("kevyourpassword"));   
-        validAccounts.add(sha256("leonieproducedmoon"));   
-        validAccounts.add(sha256("melanieproducedmoon"));   
+    	validAccounts.add(sha256("yournameyourpassword"));   
+        
     }
     
     public static String sha256(String base) {
@@ -190,5 +189,28 @@ public class SocketSessionHandler {
     	}
 	}
     
-    
+	/**
+     * If the server is reloading data from disk, tell all the consoles to clear their in-memory sets
+     * - the server should be about to tell them everything it knows again.
+     * @param error
+     */
+	public void BroadcastReset() {
+		System.out.println("Broadcasting reset to " + sessions.size());
+    	
+    	synchronized (sessions) {			
+	    	for (Session s : sessions)
+	    	{
+	    		// Only broadcast to authorised consoles...
+	    		if (consoles.containsKey(s))
+	    		{
+		    		try {
+						s.getBasicRemote().sendText("{\"reset\":\"true\"}");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    		}
+	    	}
+    	}
+	}
 }

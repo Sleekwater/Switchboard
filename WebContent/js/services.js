@@ -140,6 +140,16 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 							Service.consoles[found] = data.console;						
 					}
 				}
+				
+				// Are we resetting the performance? Wipe out all the data, the server will reinit and tell us what's going on shortly
+				if (data.reset)
+				{
+					Service.audios.splice(0,Service.audios.length);
+					Service.texts.splice(0,Service.texts.length);
+					Service.goals.splice(0,Service.goals.length);
+					Service.ivrsteps.splice(0,Service.ivrsteps.length);
+				}
+				
 				if (data.audio)
 				{
 					//console.log("Got an audio event");
