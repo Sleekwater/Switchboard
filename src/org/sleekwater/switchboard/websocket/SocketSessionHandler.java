@@ -19,6 +19,7 @@ import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
 import org.sleekwater.switchboard.IvrSteps;
+import org.sleekwater.switchboard.Switchboard;
 import org.sleekwater.switchboard.Texts;
 
 /**
@@ -39,7 +40,7 @@ public class SocketSessionHandler {
 
     public SocketSessionHandler(){
     	validAccounts.add(sha256("yournameyourpassword"));   
-        
+       
     }
     
     public static String sha256(String base) {
@@ -122,6 +123,10 @@ public class SocketSessionHandler {
         {
         	session.getBasicRemote().sendText(s);
         }
+        
+        // And system settings
+        session.getBasicRemote().sendText(Switchboard.s.toString());
+        
         // The new session should now have an up to date list of all the data that the server has.
         // As states changes then the latest will be sent to each connected console.
     }

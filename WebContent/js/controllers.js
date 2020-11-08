@@ -27,6 +27,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	$scope.goals = NotifyService.goals;
 	$scope.ivrsteps = NotifyService.ivrsteps;
 	$scope.errormessage = NotifyService.errormessage;
+	$scope.setting = NotifyService.setting;
 
 	$scope.notifyService = NotifyService;
 
@@ -68,13 +69,18 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		$scope.issetup = !$scope.issetup;
 	}
 	// You can either use goals or IVR, not both
-	$scope.isIvrmode = true;	
+	
 	$scope.ivrMode = function() {
-		$scope.isIvrmode = !$scope.isIvrmode;
+		$scope.setting.isivrmode = !$scope.setting.isivrmode;
 		// Tell the server, as different things happen based on this
-		$scope.notifyService.ping('{"setting":{"ivrmode":"' + $scope.isIvrmode + '"}}')
+		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
 	}
-
+	
+	$scope.autoRegister = function() {
+		$scope.setting.autoregister = !$scope.setting.autoregister
+		// Tell the server, as different things happen based on this
+		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
+	}
 
 	$scope.activePanel = 'overview'; 
 	$scope.toggleActivePanel = function(panel) {

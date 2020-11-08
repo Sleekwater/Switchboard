@@ -25,6 +25,7 @@ import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Goals;
 import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Settings;
+import org.sleekwater.switchboard.Switchboard;
 import org.sleekwater.switchboard.Texts;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
@@ -100,6 +101,8 @@ public class FileUpload extends HttpServlet {
     	catch (Exception e){
     		System.out.println(e);
     	}
+    	
+    	ClientWebsocketServlet.sessionHandler.Broadcast(Switchboard.s.toJsonObject());
     }
     
 	/**

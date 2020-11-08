@@ -27,6 +27,8 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	var noAuth = false;
 	Service.connected = false;
 	Service.errormessage = [];
+	// Default server settings, will be overwritten by a server message
+	Service.setting = {'autoregister':false, 'isivrmode':true};
 	
 	//console.log(authCookie);
 	// Find out where my server is located (relative to this file), so I can call back to it using websockets
@@ -261,6 +263,13 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 				{
 					console.log("Got error: " + data.error);
 					Service.errormessage.push(data.error);					
+				}
+				
+				if (data.setting)
+				{
+					// Load up some system-wide settings that might change how everything works
+					Service.setting.isivrmode = data.setting.isivrmode;
+					Service.setting.autoregister = data.setting.autoregister;
 				}
 			});
 		}   

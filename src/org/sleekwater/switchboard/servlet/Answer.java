@@ -23,6 +23,7 @@ import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Servlet implementation class Answer
+ * This is the initial URL that Plivo will call for any inbound call
  */
 @WebServlet(description = "Servlet handler for Plivo Answer callbacks", urlPatterns = { "/Answer" }, loadOnStartup=1)
 public class Answer extends HttpServlet {
@@ -70,20 +71,30 @@ public class Answer extends HttpServlet {
 		if (!Devices.d.exists(from))
 		{
 			System.out.println("Not a known number - registering");			
-			String plivoXML = Goals.checkGoal("registeraudiostart", null, null);
-			if (null == plivoXML)
-				plivoXML = "<Speak voice=\"WOMAN\">Welcome to the switchboard. Press 1 to register for the performance.</Speak>";
-			// Return the registration XML, and point Plivo to the next servlet
-			
-			// Do the "thank you for registering" message
-			url +="/Register";
-			xml = "<Response>"
-					+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"10\">"
-					+ plivoXML
-					+ "</GetDigits></Response>";
+			if (!Switchboard.s.isAutoregister)
+			{
+				xml = "<Response>"+
+						"<Speak voice=\"WOMAN\">I'm sorry, the switchboard is currently closed for new registrations. Thank you for your interest.</Speak>"
+					+ "</Response>";
+			}
+			else
+			{
+				String plivoXML = Goals.checkGoal("registeraudiostart", null, null);
+				if (null == plivoXML)
+					plivoXML = "<Speak voice=\"WOMAN\">Welcome to the switchboard. Press 1 to register for the performance.</Speak>";
+				// Return the registration XML, and point Plivo to the next servlet
+				
+				// Do the "thank you for registering" message
+				url +="/Register";
+				xml = "<Response>"
+						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"10\">"
+						+ plivoXML
+						+ "</GetDigits></Response>";
+			}
 		}
 		else
 		{
+			// This is a known (registered) device
 			// Are we running an IVR menu?
 			if (Switchboard.s.isIVR)
 			{
