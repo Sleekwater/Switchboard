@@ -76,11 +76,11 @@
 				<div class="two columns">
 					<button class="wide" ng-click="toggleActivePanel('sms')" ng-class="{selected:isActivePanel('sms')}">Text</button>
 				</div>
-				<div class="two columns" ng-show="issetup && !isIvrmode">
+				<div class="two columns" ng-show="issetup && !setting.isivrmode">
 					<button class="wide" ng-click="toggleActivePanel('goal')" ng-class="{selected:isActivePanel('goal')}">Goals</button>
 					&nbsp;
 				</div>
-				<div class="two columns" ng-show="issetup && isIvrmode" >
+				<div class="two columns" ng-show="issetup && setting.isivrmode" >
 					<button class="wide" ng-click="toggleActivePanel('ivr')" ng-class="{selected:isActivePanel('ivr')}">IVR</button>
 					&nbsp;
 				</div>
@@ -160,8 +160,10 @@
 						<h4>Performance</h4>
 						{{audios.length}} audio file<span ng-show="audios.length != 1">s</span> available<br/>
 						{{texts.length}} text file<span ng-show="texts.length != 1">s</span> available<br/>
-						{{goals.length}} goal<span ng-show="goals.length != 1">s</span> available<br/>
-						<span ng-show="isIvrmode">
+						<span ng-show="!setting.isivrmode">
+							{{goals.length}} goal<span ng-show="goals.length != 1">s</span> available<br/>
+						</span>
+						<span ng-show="setting.isivrmode">
 							{{ivrsteps.length}} IVR step<span ng-show="ivrsteps.length != 1">s</span> available<br/>
 						</span>
 					</div>
