@@ -52,8 +52,10 @@ public class IvrStep {
 	 */
 	public boolean endsCall()
 	{
-		if (keys.size() == 0)
+		
+		if (null == keys || keys.size() == 0)
 			return true;
+		System.out.println("endsCall: Step " + this.name + " has " + keys.size());
 		return false;
 	}
 	

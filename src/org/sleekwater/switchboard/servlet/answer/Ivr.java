@@ -71,15 +71,14 @@ public class Ivr extends HttpServlet {
 				if (nextStep.endsCall())
 				{
 					xml = "<Response>"
-							+ "<Play loop=\"0\">" + nextStep.getAudioPath(d) +"</Play>"
-							+ "<Hangup/>"
+							+ "<Play>" + nextStep.getAudioPath(d) +"</Play>"
 							+ "</Response>";
 				}
 				else
 				{
 					xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ "<Play loop=\"0\">" + nextStep.getAudioPath(d) +"</Play>"
+						+ "<Play>" + nextStep.getAudioPath(d) +"</Play>"
 						+ "</GetDigits>"
 						+ "</Response>";
 				}
@@ -106,6 +105,8 @@ public class Ivr extends HttpServlet {
 		{
 			System.out.println("Failed to parse ivrstep " + e);
 		}
+		
+		System.out.println("Plivo XML is : " + xml);
 		
 		response.getWriter().write(xml);
 		response.addHeader("content-type", "application/xml");

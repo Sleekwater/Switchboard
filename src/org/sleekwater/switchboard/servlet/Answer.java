@@ -95,7 +95,7 @@ public class Answer extends HttpServlet {
 				Device d = Devices.d.get(from);
 				IvrStep currentStep = IvrSteps.i.getStep(d);
 				// Have we finished (and are restarting?)
-				if (currentStep.endsCall())
+				if (null == currentStep || currentStep.endsCall())
 				{
 					currentStep = IvrSteps.i.getStep("start");
 				}
@@ -107,7 +107,7 @@ public class Answer extends HttpServlet {
 				url +="/Ivr";					
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ "<Play loop=\"0\">" + currentStep.getAudioPath(d) +"</Play>"
+						+ "<Play>" + currentStep.getAudioPath(d) +"</Play>"
 						+ "</GetDigits></Response>";
 			}
 			else
@@ -119,6 +119,7 @@ public class Answer extends HttpServlet {
 	
 				String audioPath = Settings.s.callbackUrl + "resources/Ringing_Phone.mp3"; 	
 				// And point plivo to the ringing callback - I have the getdigits on, as I'm listening for a 9 to unregister
+				// Note loop=0 to repeat indefinitely
 				url +="/Ring";
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"

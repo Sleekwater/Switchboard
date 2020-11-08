@@ -199,7 +199,7 @@ public class IvrSteps {
 	 */
 	public IvrStep getStep(String name)
 	{
-		return ivrs.get("name");
+		return ivrs.get(name);
 	}
 
 
