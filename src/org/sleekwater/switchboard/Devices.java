@@ -122,6 +122,20 @@ public final class Devices {
 		}
 		return true;
 	}
+	
+	public Boolean ivr(String number, String CallUUID)
+	{
+		synchronized(devices)
+		{
+			Device d = devices.get(number);
+			if (null == d)
+				return false;			
+			d.state = DeviceState.IVR;
+			d.call_uuid = CallUUID;
+			d.broadcastChange("ivr");
+		}
+		return true;
+	}
 
 	public static Boolean hangup(String number, String callStatus, String hangupCause)
 	{

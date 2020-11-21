@@ -21,6 +21,9 @@ import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Switchboard;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
+import com.plivo.helper.exception.PlivoException;
+import com.plivo.helper.xml.elements.PlivoResponse;
+
 /**
  * Servlet implementation class Answer
  * This is the initial URL that Plivo will call for any inbound call
@@ -100,26 +103,31 @@ public class Answer extends HttpServlet {
 			{
 				// We are, so find the current state of this device in the IVR menu and play the audio for it
 				System.out.println("Known number - (re)start the IVR menu");
-				// Tell the console that this device is calling
-				Devices.d.ring(from, CallUUID);
+				// Tell the console that this device is in the IVR menu
+				Devices.d.ivr(from, CallUUID);
 				// Get the current step in the IVR from the device
 				Device d = Devices.d.get(from);
 				IvrStep currentStep = IvrSteps.i.getStep(d);
 				// Have we finished (and are restarting?)
 				if (null == currentStep || currentStep.endsCall())
 				{
+					// Start step always exists...
 					currentStep = IvrSteps.i.getStep("start");
 				}
 				if (null != d)
 				{
 					d.updateIvrProgress(currentStep);					
 				}
-				// And point plivo to audio I want to play
-				url +="/Ivr";					
-				xml = "<Response>"
-						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ "<Play>" + currentStep.getAudioPath(d) +"</Play>"
-						+ "</GetDigits></Response>";
+				// And point plivo to what I want to play
+				PlivoResponse resp = new PlivoResponse();
+				try {
+					currentStep.buildPlivoIvrResponse(resp, d, 0);
+				}
+				catch (PlivoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				xml = resp.toXML();				
 			}
 			else
 			{

@@ -5,5 +5,6 @@ public enum DeviceState {
 	RING,
 	BUSY, 
 	CALL,
+	IVR,
 	REMOVED 
 }

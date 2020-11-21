@@ -15,6 +15,8 @@ import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.IvrStep;
 import org.sleekwater.switchboard.IvrSteps;
 
+import com.plivo.helper.xml.elements.PlivoResponse;
+
 /**
  * We start off the Ivr system in the /Answer servlet, but handle all subsequent callbacks in this servlet
  */
@@ -54,7 +56,7 @@ public class Ivr extends HttpServlet {
 
 		try
 		{
-			// OK, we've had the audio message played for this step of the IVR. We've (hopefully) had a key pressed - find out what was pressed
+			// OK, we've had the audio message played for this step of the IVR. We've (maybe) had a key pressed - find out what was pressed
 			Device d = Devices.d.get(from);
 			System.out.println("Ivr - do the next step for device " + d);
 			IvrStep currentStep = IvrSteps.i.getStep(d);
@@ -68,21 +70,11 @@ public class Ivr extends HttpServlet {
 			
 			if (null != nextStep)
 			{
-				if (nextStep.endsCall())
-				{
-					xml = "<Response>"
-							+ "<Play>" + nextStep.getAudioPath(d) +"</Play>"
-							+ "</Response>";
-				}
-				else
-				{
-					xml = "<Response>"
-						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ "<Play>" + nextStep.getAudioPath(d) +"</Play>"
-						+ "</GetDigits>"
-						+ "</Response>";
-				}
-				
+				// Ask plivo what to play next
+				// First attach a record object to the response...			
+				PlivoResponse resp = new PlivoResponse();
+				nextStep.buildPlivoIvrResponse(resp, d, 0);
+				xml = resp.toXML();
 				// Remember where we are, so that the next callback will go to the right place in the menu system
 				if (null != d)
 				{

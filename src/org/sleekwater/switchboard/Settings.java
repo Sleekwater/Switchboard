@@ -8,7 +8,7 @@ public class Settings {
     // Some public values read from the web.xml file
     public String uploadDiskPath="";
     public String uploadDirectory  = "";
-    public String callbackUrl = "";
+    public String callbackUrl = ""; // Must end with a /
 	public String plivo_auth_id;
 	public String plivo_auth_token;
 	public String plivo_registerednumber;    

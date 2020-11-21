@@ -10,7 +10,16 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.sleekwater.switchboard.Goal.GoalRunner;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
+
+import com.plivo.helper.exception.PlivoException;
+import com.plivo.helper.xml.elements.GetDigits;
+import com.plivo.helper.xml.elements.Play;
+import com.plivo.helper.xml.elements.PlivoResponse;
+import com.plivo.helper.xml.elements.Record;
+import com.plivo.helper.xml.elements.Redirect;
+import com.plivo.helper.xml.elements.Speak;
 
 
 public class IvrStep {
@@ -244,18 +253,89 @@ public class IvrStep {
 	 */
 	public IvrStep parseDigits(String digits) {
 
-		if (null == digits || digits.length() == 0 && "start".equalsIgnoreCase(this.name))
+		if ((null == digits || digits.length() == 0) && "start".equalsIgnoreCase(this.name))
 		{
 			// Do the start step if we're jumping straight to it
 			return this;
 		}
+		
+		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
+		if (!"playaudio".equalsIgnoreCase(this.steptype))
+		{
+			return (IvrSteps.i.get(defaultKey));
+		}
 
-		// Move to the next step
+		// Look at the key pressed to work out what the next step is
 		if (keys.containsKey(digits))
 		{
 			String target = keys.get(digits);
 			return IvrSteps.i.get(target);
 		}
 		return null;
+	}
+
+	/**
+	 * Based on our type of step, populate the plivo response which will build the XML for us
+	 * @return
+	 * @throws PlivoException 
+	 */
+	public void buildPlivoIvrResponse(PlivoResponse resp, Device d, int depth) throws PlivoException {
+		
+		System.out.println("Building Plivo IVR xml for " + d + " in step " + this.name);
+		
+		if (depth > 4)
+		{
+			// OK, something's gone wrong. Bail with whatever we've got so far
+			System.out.println("Depth limit exceeded  - bailing");
+			return;
+		}
+		if ("playaudio".equalsIgnoreCase(this.steptype))
+		{
+			if (this.endsCall())
+			{
+				resp.append(new Play(this.getAudioPath(d)));
+			}
+			else
+			{
+				 GetDigits digits = new GetDigits();
+                 digits.setAction(Settings.s.callbackUrl + "Answer/Ivr");
+                 digits.setDigitTimeout(30);
+                 digits.setNumDigits(1);
+                 digits.setMethod("POST");
+                 digits.append(new Play(this.getAudioPath(d)));
+                 resp.append(digits);
+			}
+		}
+		else if ("sendtext".equalsIgnoreCase(this.steptype))
+		{
+			// This is a little unusual, in that I'm going to send the text but bounce directly to the *next* step in the chain
+			// Thus, the "sendtext" step has no response to Plivo at all - it's the next step that responds.
+			// Note also that if there are multiple send text steps then they'll chain. I add a depth counter to prevent mad loops...
+			
+			// Send text - I can safely do this synchronously as there's no delay involved
+			d.Sms(null, Texts.t.get(this.text.getString("name")));
+			
+			IvrStep nextStep = IvrSteps.i.get(this.defaultKey);
+			if (null != nextStep)
+			{
+				nextStep.buildPlivoIvrResponse(resp, d, depth+1);
+			}
+		}
+		else if ("record".equalsIgnoreCase(this.steptype))
+		{
+			// OK, do the record step and tell the handler that we're part of an ivr, so we can chain onwards from that servlet
+			Record rec = new Record();
+			int recSecs = 60; // default
+			try{
+				recSecs = Integer.getInteger(recordTime);
+			}
+			catch (Exception e){}	// Ignore and carry on - use the default length
+			rec.setMaxLength(recSecs);
+			rec.setFinishOnKey("*");
+			rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number + "?ivr=true");
+			resp.append(rec);
+		}
+		
+		System.out.println("IVR XML is : " + resp.toXML());
 	}
 }

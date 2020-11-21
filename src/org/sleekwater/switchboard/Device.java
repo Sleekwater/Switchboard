@@ -102,7 +102,7 @@ public class Device {
 	}
 	
 	/**
-	 * Called whenever we change the step in an IVR menu, so that we can remember where this device has got to (for resume) and 
+	 * Called whenever we change the step in an IVR menu, so that we can remember where this device has got to (for resume and record) and 
 	 * keep a history of steps (so we can go back)
 	 * @param newStep
 	 */

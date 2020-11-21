@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
+import org.sleekwater.switchboard.IvrStep;
+import org.sleekwater.switchboard.IvrSteps;
+import org.sleekwater.switchboard.Settings;
 
 import com.plivo.helper.exception.PlivoException;
 import com.plivo.helper.xml.elements.Play;
@@ -23,7 +26,7 @@ public class GetRecording extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		System.out.println("GetRecording/POST");
 		Map map = request.getParameterMap();
@@ -48,6 +51,27 @@ public class GetRecording extends HttpServlet {
 		String recordDuration = request.getParameter("RecordingDuration");
 		Devices.d.recording(deviceNumber, recordUrl, recordDuration);
 
-		super.doPost(request, resp);
+		// OK, was this recording as part of an IVR menu? Then we'll need to chain to the next step for this device in the IVR menu
+		if (map.containsKey("ivr"))
+		{
+			PlivoResponse resp = new PlivoResponse();
+			IvrStep nextStep = IvrSteps.i.get(d.progress);
+			try {
+				nextStep.buildPlivoIvrResponse(resp, d, 0);
+				// Remember where we are, so that the next callback will go to the right place in the menu system
+				if (null != d)
+				{
+					d.updateIvrProgress(nextStep);					
+				}
+			} catch (PlivoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String xml = resp.toXML();
+			response.getWriter().write(xml);
+			response.addHeader("content-type", "application/xml");
+		}
+		
+		super.doPost(request, response);
 	}
 }

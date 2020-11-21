@@ -371,8 +371,6 @@
 					
 	
 					<div ng-show="isActivePanel('ivr')">
-						<h4>Interactive Voice Response</h4>
-						
 						<button ng-click="addIvrstep()">Add</button>	
 						<input ng-model="queryivrstepsrc" style="width:90%;margin:10px;" placeholder="Filter ivr steps">				
 						
@@ -406,8 +404,9 @@
 										</li>
 									</ul>
 								</div>	
-								<div class="five columns">								
-									Key mappings: <button ng-click="addIvrstepKey(activeIvrstep)" class="go" >Add</button>
+								<div class="five columns">
+									<h4>...then maps keys pressed to steps</h4>								
+									<button ng-click="addIvrstepKey(activeIvrstep)" class="go" >Add</button>
 									<ul style="overflow-y: scroll; height:300px">
 										<li style="overflow: hidden;" ng-repeat="key in activeIvrstep.keys track by $index ">
 											<input ng-model="key.key" style="width:100px; font-size:1em;"> ->
