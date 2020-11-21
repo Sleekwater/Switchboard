@@ -310,7 +310,7 @@
 								<label><input type="radio" ng-model="activeGoal.srctype" value="registertext"> Registering by text</label>
 							</div>
 							<div class="three columns" ng-show="activeGoal.srctype=='audiostart' || activeGoal.srctype=='audiofinish' || activeGoal.srctype=='record'">
-								<input ng-model="audioquerygoalsrc" style="width:90%;margin:10px;" placeholder="All audio files">
+								<input ng-model="audioquerygoalsrc" style="width:90%;margin:10px;" placeholder="Filter audio files">
 								<ul style="overflow-y: scroll; height:300px">
 									<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquerygoalsrc | orderBy:'name'" ng-click="activeGoal.activeAudioGoalSrc=audio" ng-class="{selected:audio.name == activeGoal.activeAudioGoalSrc.name}">
 										<img ng-show="audio.isFolder" src="images/folder.png"/></span><span>{{audio.name}}</span>
@@ -318,7 +318,7 @@
 								</ul>
 							</div>	
 							<div class="three columns" ng-show="activeGoal.srctype=='textsent'">
-								<input ng-model="textquerygoalsrc" style="width:90%;margin:10px;" placeholder="All text files">
+								<input ng-model="textquerygoalsrc" style="width:90%;margin:10px;" placeholder="Filter text files">
 								<ul style="overflow-y: scroll; height:300px">
 									<li style="overflow: hidden;" ng-repeat="text in texts | filter:textquerygoalsrc | orderBy:'label'" ng-click="activeGoal.activeTextGoalSrc=text" ng-class="{selected:text.label == activeGoal.activeTextGoalSrc.label}">
 										<span>{{text.label}}</span>
@@ -342,7 +342,7 @@
 								<label><input type="radio" ng-model="activeGoal.desttype" value="cueaudio"> cue audio</label>															
 							</div>
 							<div class="three columns" ng-show="activeGoal.desttype=='playaudio' || activeGoal.desttype=='cueaudio'">
-								<input ng-model="audioquerygoaldest" style="width:90%;margin:10px;" placeholder="All audio files">
+								<input ng-model="audioquerygoaldest" style="width:90%;margin:10px;" placeholder="Filter audio files">
 								<ul style="overflow-y: scroll; height:300px">
 									<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioquerygoaldest | orderBy:'name'" ng-click="activeGoal.activeAudioGoalDest=audio" ng-class="{selected:audio.name == activeGoal.activeAudioGoalDest.name}">
 										<img ng-show="audio.isFolder" src="images/folder.png"/></span><span>{{audio.name}}</span>
@@ -350,7 +350,7 @@
 								</ul>
 							</div>
 							<div class="three columns" ng-show="activeGoal.desttype=='sendtext' || activeGoal.desttype=='cuetext'">
-								<input ng-model="textquerygoaldest" style="width:90%;margin:10px;" placeholder="All text files">
+								<input ng-model="textquerygoaldest" style="width:90%;margin:10px;" placeholder="Filter text files">
 								<ul style="overflow-y: scroll; height:300px">
 									<li style="overflow: hidden;" ng-repeat="text in texts | filter:textquerygoaldest | orderBy:'label'" ng-click="activeGoal.activeTextGoalDest=text" ng-class="{selected:text.label == activeGoal.activeTextGoalDest.label}">
 										<span>{{text.label}}</span>
@@ -388,27 +388,64 @@
 						<div class="row region"  ng-show="activeIvrstep && activeIvrstep.name != 'resume' && activeIvrstep.name != 'callback'">
 							<button ng-click="saveIvrstep()" class="go" style="float:right">Save</button>						
 							<input ng-model="activeIvrstep.name" style="width:90%;margin:10px;" placeholder="Step name">
-							<div class="four columns">
-								<input ng-model="audioqueryivrstepsrc" style="width:90%;margin:10px;" placeholder="All audio files">
-								<ul style="overflow-y: scroll; height:300px">
-									<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioqueryivrstepsrc | orderBy:'name'" ng-click="activeIvrstep.audio=audio" 
-									ng-class="{selected:audio.name == activeIvrstep.audio.name}">
-										<img ng-show="audio.isFolder" src="images/folder.png"/></span><span>{{audio.name}}</span>
-									</li>
-								</ul>
-							</div>	
-							<div class="six columns">
+							<div class="two columns">
+								<h4>This step...</h4>
+								<label><input type="radio" ng-model="activeIvrstep.steptype" value="playaudio"> Plays audio</label>
+								<label><input type="radio" ng-model="activeIvrstep.steptype" value="sendtext">Sends a Text</label>	
+								<label><input type="radio" ng-model="activeIvrstep.steptype" value="record"> Records</label>															
+							</div>
+							
+							<!--  Audio only subpanel -->
+							<div ng-show="activeIvrstep.steptype=='playaudio'">
+								<div class="four columns">
+									<input ng-model="audioqueryivrstepsrc" style="width:90%;margin:10px;" placeholder="Filter audio files">
+									<ul style="overflow-y: scroll; height:300px">
+										<li style="overflow: hidden;" ng-repeat="audio in audios | filter:audioqueryivrstepsrc | orderBy:'name'" ng-click="activeIvrstep.audio=audio" 
+										ng-class="{selected:audio.name == activeIvrstep.audio.name}">
+											<img ng-show="audio.isFolder" src="images/folder.png"/></span><span>{{audio.name}}</span>
+										</li>
+									</ul>
+								</div>	
+								<div class="five columns">								
+									Key mappings: <button ng-click="addIvrstepKey(activeIvrstep)" class="go" >Add</button>
+									<ul style="overflow-y: scroll; height:300px">
+										<li style="overflow: hidden;" ng-repeat="key in activeIvrstep.keys track by $index ">
+											<input ng-model="key.key" style="width:100px; font-size:1em;"> ->
+											<input ng-model="key.target" style="font-size:1em;">
+											<button ng-click="deleteIvrstepKey(activeIvrstep, $index)" class="go" >Delete</button>
+										</li>
+									</ul>
+								</div>	
+							</div>											
+							<!--  sending text subpanel -->
+							<div ng-show="activeIvrstep.steptype=='sendtext'">
+								<div class="four columns">
+									<input ng-model="textqueryivrstepsrc" style="width:90%;margin:10px;" placeholder="Filter text files">
+									<ul style="overflow-y: scroll; height:300px">
+										<li style="overflow: hidden;" ng-repeat="text in texts | filter:textqueryivrstepsrc | orderBy:'name'" ng-click="activeIvrstep.text=text" 
+										ng-class="{selected:text.name == activeIvrstep.text.name}">
+											<span>{{text.name}}</span>
+										</li>
+									</ul>
+								</div>	
 								
-								Key mappings: <button ng-click="addIvrstepKey(activeIvrstep)" class="go" >Add</button>
-								<ul style="overflow-y: scroll; height:300px">
-									<li style="overflow: hidden;" ng-repeat="key in activeIvrstep.keys track by $index ">
-										<input ng-model="key.key" style="width:100px; font-size:1em;"> ->
-										<input ng-model="key.target" style="font-size:1em;">
-										<button ng-click="deleteIvrstepKey(activeIvrstep, $index)" class="go" >Delete</button>
-									</li>
-								</ul>
-							</div>	
-											
+								<div class="four columns">								
+									<h4>...then goes to step</h4>
+									<input ng-model="activeIvrstep.defaultkey">								
+								</div>	
+							</div>
+							
+							<!--  recording subpanel -->
+							<div ng-show="activeIvrstep.steptype=='record'">							
+								<div class="four columns">
+									<h4>...for up to...</h4>
+									<input ng-model="activeIvrstep.recordtime" style="width:90%;margin:10px;" placeholder="Seconds"> seconds
+								</div>
+								<div class="four columns">								
+									<h4>...then goes to step</h4>
+									<input ng-model="activeIvrstep.defaultkey">								
+								</div>
+							</div>
 						</div>	
 						<!--  special detail cases -->						
 						<div class="row region"  ng-show="activeIvrstep && activeIvrstep.name == 'resume'">

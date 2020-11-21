@@ -666,33 +666,64 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 			
 			
 		try{
-			if (ivrstep.audio) {
-				src += " plays";
-				if (ivrstep.audio)
-				{
-					if (ivrstep.audio.isFolder){
-						src += " a random audio from folder '" + ivrstep.audio.name + "'";
+			if (ivrstep.steptype=="playaudio")
+			{
+				if (ivrstep.audio) {
+					src += " plays";
+					if (ivrstep.audio)
+					{
+						if (ivrstep.audio.isFolder){
+							src += " a random audio from folder '" + ivrstep.audio.name + "'";
+						}
+						else {
+							src += " audio '" + ivrstep.audio.name + "'";
+						}
 					}
-					else {
-						src += " audio '" + ivrstep.audio.name + "'";
+					else
+					{
+						src += " <no audio selected>"
 					}
 				}
-				else
-				{
-					src += " <no audio selected>"
+				else{
+					src += " does nothing"
 				}
 			}
-			else{
-				src += " does nothing"
+			else if (ivrstep.steptype=="sendtext")
+			{
+				if (ivrstep.text) {
+					src += " sends";
+					if (ivrstep.text)
+					{
+						src += " text '" + ivrstep.text.name + "'";
+					}
+					else
+					{
+						src += " <no text selected>"
+					}
+				}
+				else{
+					src += " does nothing"
+				}
+			}
+			else if (ivrstep.steptype=="record")
+			{
+				src += " records for up to " + ivrstep.recordtime + " seconds";
 			}
 		}
 		catch (err){}
 
 		// List keys
 		try{
-			if (ivrstep.keys.length == 0)
+			if (ivrstep.keys.length == 0 || ivrstep.steptype!="playaudio")
 			{
-				src += " then end the call";
+				if (ivrstep.defaultkey.length==0)
+				{
+					src += " then end the call";
+				}
+				else
+				{
+					src += " then goes to step '" + ivrstep.defaultkey + "'";
+				}
 			}
 			else
 			{
