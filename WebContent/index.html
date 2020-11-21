@@ -234,7 +234,7 @@
 							  <span style="font-size:25px; color:#aaa; ">{{currentAudioFolder}}</span>
 						  </span>
 							<button ng-show="currentAudioFolder!=''" ng-click = "currentAudioFolder=''">Up</button>
-							<button ng-show="issetup" ng-click = "addAudioMode=true">+</button>
+							<button ng-show="issetup && !currentAudioFolder" ng-click = "addAudioMode=true">+</button>
 							<div ng-show="addAudioMode">
 							 	<input ng-model="addAudioFolder" style="width:70%;margin:10px;" placeholder="New directory name">
 								<button ng-click = "addAudioFolderButton(addAudioFolder); addAudioMode=false;"/>OK<br/>
