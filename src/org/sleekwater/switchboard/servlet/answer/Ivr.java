@@ -73,7 +73,7 @@ public class Ivr extends HttpServlet {
 				// Ask plivo what to play next
 				// First attach a record object to the response...			
 				PlivoResponse resp = new PlivoResponse();
-				nextStep.buildPlivoIvrResponse(resp, d, 0);
+				nextStep = nextStep.buildPlivoIvrResponse(resp, d, 0);
 				xml = resp.toXML();
 				// Remember where we are, so that the next callback will go to the right place in the menu system
 				if (null != d)

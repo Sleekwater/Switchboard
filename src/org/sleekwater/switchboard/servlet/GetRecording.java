@@ -21,7 +21,7 @@ import com.plivo.helper.xml.elements.Play;
 import com.plivo.helper.xml.elements.PlivoResponse;
 import com.plivo.helper.xml.elements.Redirect;
 
-@WebServlet(description = "Servlet handler that Plivo calls when a recording is finished", urlPatterns = { "/PlayAudio/GetRecording/*" }, loadOnStartup=1)
+@WebServlet(description = "Servlet handler that Plivo calls when a recording is finished", urlPatterns = { "/GetRecording/*" }, loadOnStartup=1)
 public class GetRecording extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -55,7 +55,8 @@ public class GetRecording extends HttpServlet {
 		if (map.containsKey("ivr"))
 		{
 			PlivoResponse resp = new PlivoResponse();
-			IvrStep nextStep = IvrSteps.i.get(d.progress);
+			IvrStep thisStep = IvrSteps.i.get(d.progress); // Should be a record step, otherwise why are we in the recording servlet?
+			IvrStep nextStep = IvrSteps.i.get(thisStep.defaultKey);
 			try {
 				nextStep.buildPlivoIvrResponse(resp, d, 0);
 				// Remember where we are, so that the next callback will go to the right place in the menu system

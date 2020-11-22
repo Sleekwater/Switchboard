@@ -129,6 +129,8 @@
 					</button>									
 					<button ng-click="selectAuto('group2')" ng-class="{selected:activeAuto=='group2'}">Group 2
 					</button>
+					<button ng-click="selectAuto('progress')" ng-class="{selected:activeAuto=='progress'}">Progress
+					</button>
 					<span ng-click='toggleModal()' style="float:right; margin-left:10px;">Add</span>
 					<span ng-click="updatestatus()" class="normal" style="float:right">Refresh</span>
 						<modal-dialog show='modalShown' width='750px' height='60%'>
@@ -171,9 +173,11 @@
 					
 					<div ng-show="getNumDevicesSelected()>0 && isActivePanel('overview')">
 						<input ng-model="getSelectedDevice().name" style="width:60%;margin:10px;" placeholder="Label">
-						<button ng-click = "saveDevice()">Save</button>
-						<button ng-show="issetup" ng-click = "resetSelectedDevice()" class="error">Unregister</button>
+						<button ng-click = "saveDevice()">Rename device</button>
+						<input ng-model="getSelectedDevice().progress" style="width:60%;margin:10px;" placeholder="Progress"> 
+						<button ng-click = "saveProgress()">Save progress</button>
 						<p>Number: {{getSelectedDevice().number}}<br>
+						<button ng-show="issetup" ng-click = "resetSelectedDevice()" class="error">Unregister</button>
 						<div ng-show="getSelectedDevice().cue">
 							<h4><button ng-click = "playCue()" ng-class="{go:hasCue()}">Cue</button>							
 							<span ng-show="getSelectedDevice().cue.text">

@@ -205,7 +205,30 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 					device.hidden = !device.selected;
 			}	
 		}
-		else{	
+		else if ($scope.activeAuto == 'progress'){
+			// Pick all the devices with the same progress as the first selected device - allows you to get all at "start", etc
+			var selectedProgress = "";
+			for(var i = 0; i < $scope.devices.length; i++){
+				// Is this device selected?
+				var device = $scope.devices[i];
+				if (device.selected){
+					selectedProgress = device.progress;
+					break;
+				}
+			}
+
+			// And autoselect all the devices with this progress value
+			for(var i = 0; i < $scope.devices.length; i++){
+				var device = $scope.devices[i];
+				if (device.progress == selectedProgress)
+					device.selected = true;				
+			}	
+			// Clear the option
+			$scope.activeAuto=""
+			$scope.notifyService.activeAuto = ""
+		}
+		else{
+			// Otherwise we do it as the device state changes, from WS messages
 			for(var i = 0; i < $scope.devices.length; i++){
 				var device = $scope.devices[i];
 				device.hidden = false;
@@ -343,6 +366,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	// You can edit the name of a device, so this allows you to save it...
 	$scope.saveDevice = function(){
 		$scope.notifyService.ping('{"savedevice":' + JSON.stringify($scope.getSelectedDevice()) + '}')  
+	}
+	
+	// You can edit the progress of a device, so this allows you to save it...
+	$scope.saveProgress = function(){
+		$scope.notifyService.ping('{"saveprogress":' + JSON.stringify($scope.getSelectedDevice()) + '}')  
 	}
 
 

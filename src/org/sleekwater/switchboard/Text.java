@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
@@ -19,7 +20,26 @@ public class Text {
 	// This is the message that is sent
 	public String name = "";
 	public TextState state = TextState.IDLE;
+
+	/**
+	 * Default no-args ctor for a vanilla text object
+	 */
+	public Text()
+	{
+		state = TextState.IDLE;
 		
+	}
+	
+	/**
+	 * Create a Text object from JSON storage
+	 * @param text
+	 */
+	public Text(JsonObject text) {
+		state = TextState.IDLE;
+		label = text.getString("label");
+		name = text.getString("name");
+	}
+
 	@Override
 	public String toString()
 	{

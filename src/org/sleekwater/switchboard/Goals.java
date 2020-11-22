@@ -206,6 +206,11 @@ public final class Goals {
 	 */
 	public static String checkGoal(String eventtype, Object eventparam, Device d)
 	{
+		// If we're in IVR mode then we don't allow goals to fire, even if they're defined 
+		// - as that way madness lies, if you have two places trying to automate what the call does...
+		if (Switchboard.s.isIVR)
+			return null;
+		
 		System.out.println("Checking goal of " + eventtype);
 		try{
 			synchronized(goals)

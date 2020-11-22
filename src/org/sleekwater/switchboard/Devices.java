@@ -146,6 +146,7 @@ public final class Devices {
 				return false;
 			d.hangup();
 			d.state = DeviceState.IDLE;
+			
 			d.call_uuid = "";
 			if (d.currentTransfer != null)
 			{
@@ -153,12 +154,13 @@ public final class Devices {
 				d.currentTransfer.state = DeviceState.IDLE;
 				d.currentTransfer.call_uuid = "";
 				d.currentTransfer.broadcastChange("hangup");
-				d.currentTransfer = null;
+				d.currentTransfer = null;				
 			}
 			if (callStatus.contains("failed"))
 			{
 				d.addAudit("CALL FAILED because " + hangupCause);
 			}
+			
 			d.broadcastChange("hangup");
 		}
 		return true;
@@ -173,6 +175,20 @@ public final class Devices {
 				return false;
 			d.addAudit("Rename from " + d.name + " to " + name);
 			d.name = name ;
+			d.broadcastChange("edit");
+		}
+		return true;
+	}
+	
+	public static Boolean updateProgress(String number, String newProgress)
+	{
+		synchronized(devices)
+		{
+			Device d = devices.get(number);
+			if (null == d)
+				return false;
+			d.addAudit("Edited progress from " + d.progress + " to " + newProgress);
+			d.progress = newProgress;
 			d.broadcastChange("edit");
 		}
 		return true;

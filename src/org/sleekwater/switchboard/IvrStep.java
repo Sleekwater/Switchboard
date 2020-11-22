@@ -81,9 +81,22 @@ public class IvrStep {
 	public boolean endsCall()
 	{
 
-		if (null == keys || keys.size() == 0 && null==defaultKey || defaultKey.length()==0)
-			return true;
-		System.out.println("endsCall: Step " + this.name + " has " + keys.size() + " default=" + defaultKey);
+		if ("playaudio".equalsIgnoreCase(steptype))
+		{
+			if ((null == keys || keys.size() == 0))
+			{
+				System.out.println("Step " + this.name + " ends the call because there are no mapped keys!");
+				return true;
+			}
+		}
+		else
+		{
+			if ((null==defaultKey || defaultKey.length()==0))
+			{
+				System.out.println("Step " + this.name + " ends the call because there is no default key!");
+			}
+		}
+
 		return false;
 	}
 
@@ -258,7 +271,7 @@ public class IvrStep {
 			// Do the start step if we're jumping straight to it
 			return this;
 		}
-		
+
 		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
 		if (!"playaudio".equalsIgnoreCase(this.steptype))
 		{
@@ -276,66 +289,74 @@ public class IvrStep {
 
 	/**
 	 * Based on our type of step, populate the plivo response which will build the XML for us
-	 * @return
+	 * @return the step that actually handles it - so we can deal with things like SMS steps that just do something
 	 * @throws PlivoException 
 	 */
-	public void buildPlivoIvrResponse(PlivoResponse resp, Device d, int depth) throws PlivoException {
-		
-		System.out.println("Building Plivo IVR xml for " + d + " in step " + this.name);
-		
-		if (depth > 4)
+	public IvrStep buildPlivoIvrResponse(PlivoResponse resp, Device d, int depth) throws PlivoException {
+
+		System.out.println("Building Plivo IVR xml for step '" + this.name + "' Device: " + d );
+
+		try
 		{
-			// OK, something's gone wrong. Bail with whatever we've got so far
-			System.out.println("Depth limit exceeded  - bailing");
-			return;
-		}
-		if ("playaudio".equalsIgnoreCase(this.steptype))
-		{
-			if (this.endsCall())
+			if (depth > 4)
 			{
-				resp.append(new Play(this.getAudioPath(d)));
+				// OK, something's gone wrong. Bail with whatever we've got so far
+				System.out.println("Depth limit exceeded  - bailing");
+				return this;
 			}
-			else
+			if ("playaudio".equalsIgnoreCase(this.steptype))
 			{
-				 GetDigits digits = new GetDigits();
-                 digits.setAction(Settings.s.callbackUrl + "Answer/Ivr");
-                 digits.setDigitTimeout(30);
-                 digits.setNumDigits(1);
-                 digits.setMethod("POST");
-                 digits.append(new Play(this.getAudioPath(d)));
-                 resp.append(digits);
+				if (this.endsCall())
+				{
+					resp.append(new Play(this.getAudioPath(d)));
+				}
+				else
+				{
+					GetDigits digits = new GetDigits();
+					digits.setAction(Settings.s.callbackUrl + "Answer/Ivr");
+					digits.setDigitTimeout(30);
+					digits.setNumDigits(1);
+					digits.setMethod("POST");
+					digits.append(new Play(this.getAudioPath(d)));
+					resp.append(digits);
+				}
 			}
-		}
-		else if ("sendtext".equalsIgnoreCase(this.steptype))
-		{
-			// This is a little unusual, in that I'm going to send the text but bounce directly to the *next* step in the chain
-			// Thus, the "sendtext" step has no response to Plivo at all - it's the next step that responds.
-			// Note also that if there are multiple send text steps then they'll chain. I add a depth counter to prevent mad loops...
-			
-			// Send text - I can safely do this synchronously as there's no delay involved
-			d.Sms(null, Texts.t.get(this.text.getString("name")));
-			
-			IvrStep nextStep = IvrSteps.i.get(this.defaultKey);
-			if (null != nextStep)
+			else if ("sendtext".equalsIgnoreCase(this.steptype))
 			{
-				nextStep.buildPlivoIvrResponse(resp, d, depth+1);
+				// This is a little unusual, in that I'm going to send the text but bounce directly to the *next* step in the chain
+				// Thus, the "sendtext" step has no response to Plivo at all - it's the next step that responds.
+				// Note also that if there are multiple send text steps then they'll chain. I add a depth counter to prevent mad loops...
+				// Send text - I can safely do this synchronously as there's no delay involved
+				Text sms = new Text(this.text);
+				d.Sms(sms.name, sms);
+				
+				IvrStep nextStep = IvrSteps.i.get(this.defaultKey);
+				if (null != nextStep)
+				{
+					return nextStep.buildPlivoIvrResponse(resp, d, depth+1);
+				}
+			}
+			else if ("record".equalsIgnoreCase(this.steptype))
+			{
+				// OK, do the record step and tell the handler that we're part of an ivr, so we can chain onwards from that servlet
+				Record rec = new Record();
+				int recSecs = 60; // default
+				try{
+					recSecs = Integer.getInteger(recordTime);
+				}
+				catch (Exception e){}	// Ignore and carry on - use the default length
+				rec.setMaxLength(recSecs);
+				rec.setFinishOnKey("*");
+				rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number + "?ivr=true");
+				resp.append(rec);
 			}
 		}
-		else if ("record".equalsIgnoreCase(this.steptype))
+		catch (Exception e)
 		{
-			// OK, do the record step and tell the handler that we're part of an ivr, so we can chain onwards from that servlet
-			Record rec = new Record();
-			int recSecs = 60; // default
-			try{
-				recSecs = Integer.getInteger(recordTime);
-			}
-			catch (Exception e){}	// Ignore and carry on - use the default length
-			rec.setMaxLength(recSecs);
-			rec.setFinishOnKey("*");
-			rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number + "?ivr=true");
-			resp.append(rec);
+			System.out.println("Exception while creating plivo XML " + e);
 		}
-		
+
 		System.out.println("IVR XML is : " + resp.toXML());
+		return this;
 	}
 }

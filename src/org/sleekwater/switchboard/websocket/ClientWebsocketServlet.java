@@ -209,6 +209,12 @@ public class ClientWebsocketServlet {
 			{
 				Devices.updateName(savedevice.getString("number"), savedevice.getString("name"));
 			}
+			JsonObject saveprogress = o.getJsonObject("saveprogress");
+			if (null != saveprogress)
+			{
+				Devices.updateProgress(saveprogress.getString("number"), saveprogress.getString("progress"));
+			}
+
 			
 			JsonObject setmessagesread = o.getJsonObject("setmessagesread");
 			if (null != setmessagesread)

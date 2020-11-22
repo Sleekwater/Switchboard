@@ -298,7 +298,7 @@ public class Device {
 			JsonObjectBuilder message = Json.createObjectBuilder();
 			message.add("text", text);				
 			session.getBasicRemote().sendText(message.build().toString());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
@@ -381,6 +381,7 @@ public class Device {
 				ClientWebsocketServlet.sessionHandler.BroadcastError(e.getLocalizedMessage());
 			}	
 		}
+		addAudit("Call ended");
 	}
 
 	public void addAudit(String string) {

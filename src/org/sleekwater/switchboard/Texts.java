@@ -114,8 +114,7 @@ public final class Texts {
 	 */
 	public void add(File f)
 	{
-		Text t = new Text();
-		t.state = TextState.IDLE;
+		
 
 		// Read the file as the body of this text.
 		try {
@@ -125,9 +124,7 @@ public final class Texts {
 			JsonObject object = jsonReader.readObject();
 			jsonReader.close();
 			JsonObject text = object.getJsonObject("text");
-			t.label = text.getString("label");
-			t.name = text.getString("name");
-			add(t);
+			add(new Text(text));
 		} catch (IOException e) {}
 		
 	}
@@ -141,7 +138,6 @@ public final class Texts {
 	public Boolean add(String label, String name)
 	{
 		Text t = new Text();
-		t.state = TextState.IDLE;
 		t.label = label;
 		t.name = name;
 		t.saveToFile(t.label);				

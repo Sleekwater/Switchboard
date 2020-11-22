@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
+import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.exception.PlivoException;
@@ -70,7 +71,7 @@ public class PlayAudio extends HttpServlet {
 		if (null != recordLength)
 		{
 			rec = new Record();
-			rec.setAction(url + "/GetRecording/" + d.number);
+			rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number);
 			int recSecs = 60; // default
 			try{
 				recSecs = Integer.getInteger(recordLength);
