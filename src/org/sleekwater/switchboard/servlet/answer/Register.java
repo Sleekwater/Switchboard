@@ -35,7 +35,7 @@ public class Register extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Answer/Register/POST");
 		String from = request.getParameter("From");
-		String xml = "<Response><Speak voice=\"WOMAN\">Sorry, there has been an error.</Speak></Response>";
+		String xml = "<Response><Speak voice=\"WOMAN\">" +  Switchboard.s.messageGenericError + "</Speak></Response>";
 		String url = request.getRequestURL().toString() + "/Unregister";
 		String digits = "";
 		try
@@ -55,12 +55,11 @@ public class Register extends HttpServlet {
 				Device d = Devices.d.get(from);
 				String plivoXML = Goals.checkGoal("registeraudiofinish", null, d);
 				if (null == plivoXML)
-					plivoXML = "<Speak voice=\"WOMAN\">Welcome, and thank you for registering. Press 9 to cancel at any time. "
-						+ "You will be unregistered automatically at the end of the performance.</Speak>";
+					plivoXML = "<Speak voice=\"WOMAN\">" + Switchboard.s.messageRegistrationComplete + "</Speak>";
 				if (Switchboard.s.isIVR)
 				{
 					// drop straight into the Ivr system after registration, as it's too fiddly to have to ring up twice.
-					plivoXML = "<Speak voice=\"WOMAN\">Welcome, and thank you for registering. The performance will start in just a few moments, please wait. </Speak>"
+					plivoXML = "<Speak voice=\"WOMAN\">" + Switchboard.s.messageRegistrationIvr +"</Speak>"
 							+ "<Redirect>"+ Settings.s.callbackUrl + "Answer/Ivr</Redirect>";
 				}
 				
@@ -72,7 +71,7 @@ public class Register extends HttpServlet {
 			else
 			{
 				xml = "<Response>"
-						+ "<Speak voice=\"WOMAN\">Sorry, you must press 1 on your keypad to register for the performance. Please try again."
+						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageMustConfirmRegistration 
 						+ "</Speak>"
 						+ "</Response>";
 			}			

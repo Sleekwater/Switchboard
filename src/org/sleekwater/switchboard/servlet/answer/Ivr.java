@@ -14,6 +14,7 @@ import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.IvrStep;
 import org.sleekwater.switchboard.IvrSteps;
+import org.sleekwater.switchboard.Switchboard;
 
 import com.plivo.helper.xml.elements.PlivoResponse;
 
@@ -47,7 +48,7 @@ public class Ivr extends HttpServlet {
 	    };
 		
 		String xml = "<Response>"
-				+ "<Speak voice=\"WOMAN\">I'm sorry, there has been a problem. Please try again."
+				+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError
 				+ "</Speak>"
 				+ "</Response>";
 		String from = request.getParameter("From");
@@ -85,7 +86,7 @@ public class Ivr extends HttpServlet {
 			{
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ "<Speak voice=\"WOMAN\">Sorry, " + digits + " is not a valid key. Please try again."
+						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageInvalidKey 
 						+ "</Speak>"
 						+ "</Response>";
 				

@@ -93,7 +93,7 @@
 				&nbsp;
 				</div>	
 			</div>
-			<div class="row" ng-show="!isActivePanel('goal') && !isActivePanel('ivr') && !isActivePanel('settings')">
+			<div class="row" ng-show="!isActivePanel('goal') && !isActivePanel('ivr') && !isActivePanel('settings')&& !isActivePanel('defaults')">
 				<div class="six columns region">
 				
 					<input ng-model="query" style="width:99%;" placeholder="All devices">
@@ -286,7 +286,7 @@
 				</div>
 			
 			</div>
-			<div class="row" ng-show="isActivePanel('goal') || isActivePanel('ivr') || isActivePanel('settings')">
+			<div class="row" ng-show="isActivePanel('goal') || isActivePanel('ivr') || isActivePanel('settings') || isActivePanel('defaults')">
 				<div class="twelve columns region">
 				
 				
@@ -472,13 +472,37 @@
 						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices from the performance. This cannot be undone.<br/>					
 						<button ng-click="ivrMode()" ng-class="{selected: setting.isivrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu if enabled, or use goals for automation<br/>
 						<button ng-click="autoRegister()" ng-class="{selected: setting.autoregister}">Registration</button>&nbsp;Can devices register themselves by phoning the switchboard?<br/>
-						
+						<button ng-click="toggleActivePanel('defaults')">Default messages...</button>
 						<h5>Backup and restore</h5>
 						<div>Keep a local copy of the current performance files</div>
 						<button ng-click="saveBackup()">Backup</button>&nbsp;Backup the current performance to a local zip file<br/>
 						Restore a performance from a zipfile. <b>This will erase the current performance.</b>
 						<br/><input type = "file" file-model = "myBackupFile"/>		
 						<button class="error" ng-show="myBackupFile" ng-click = "uploadBackupFile()">Restore</button>					
+					</div>
+					
+					<div ng-show="isActivePanel('defaults')">
+						
+						<h5>Default messages</h5>			
+							When not registered and switchboard registration is turned on
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageWelcome">
+							When not registered and switchboard registration is turned off
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageCannotRegister">
+							When something goes wrong
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageGenericError">
+							When an unmapped IVR key has been pressed
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageInvalidKey">
+							When the wrong button has been pressed during registration
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageMustConfirmRegistration">
+							When a call hasn't been answered in time
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messagePleaseWait">
+							Registration successful when IVR is off
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageRegistrationComplete">
+							Registration successful when IVR is on
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageRegistrationIvr">
+							Unregistration successful
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageUnregistrationSuccessful">
+							<button class="wide" ng-click="saveSettings();toggleActivePanel('settings')">Save</button>				
 					</div>
 				</div>
 			</div>	

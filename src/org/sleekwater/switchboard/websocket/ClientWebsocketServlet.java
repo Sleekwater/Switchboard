@@ -257,10 +257,8 @@ public class ClientWebsocketServlet {
 			JsonObject setting = o.getJsonObject("setting");
 			if (null != setting)
 			{
-				if (setting.containsKey("isivrmode"))
-					Switchboard.s.isIVR = (setting.getBoolean("isivrmode"));
-				if (setting.containsKey("autoregister"))
-					Switchboard.s.isAutoregister = (setting.getBoolean("autoregister"));
+				Switchboard.s.parseJson(setting);
+				Switchboard.s.persist();
 				// Tell everyone about this...
 				sessionHandler.Broadcast(o);
 			}

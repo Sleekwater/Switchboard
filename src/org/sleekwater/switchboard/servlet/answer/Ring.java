@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.sleekwater.switchboard.Devices;
+import org.sleekwater.switchboard.Switchboard;
 
 /**
  * Servlet implementation class Register
@@ -45,7 +46,7 @@ public class Ring extends HttpServlet {
 		
 		String from = request.getParameter("From");
 		String digits = request.getParameter("Digits");
-		String xml = "<Response><Speak voice=\"WOMAN\">Sorry, there has been an error.</Speak></Response>";
+		String xml = "<Response><Speak voice=\"WOMAN\">"+  Switchboard.s.messageGenericError +"</Speak></Response>";
 		String url = request.getRequestURL().toString() + "/Unregister";
 
 		// OK, we've had the ringing. We've had a key pressed while ringing.
@@ -57,7 +58,7 @@ public class Ring extends HttpServlet {
 				
 				// Tell plivo that we're done
 				xml = "<Response>"
-						+ "<Speak voice=\"WOMAN\">Thank you. You are now unregistered, and will not take any further part in the performance.</Speak>"
+						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageUnregistrationSuccessful + "</Speak>"
 						+ "</Response>";
 			}
 			else
@@ -65,7 +66,7 @@ public class Ring extends HttpServlet {
 				// Todo - work out what happens with a timeout...
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"10\">"
-						+ "<Speak voice=\"WOMAN\">Sorry it's taking a while. Ring ring.</Speak>"
+						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messagePleaseWait + "</Speak>"
 						+ "</GetDigits></Response>";				
 			}
 			

@@ -81,6 +81,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		// Tell the server, as different things happen based on this
 		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
 	}
+	
+	$scope.saveSettings = function() {
+		// Tell the server
+		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
+	}
 
 	$scope.activePanel = 'overview'; 
 	$scope.toggleActivePanel = function(panel) {

@@ -28,7 +28,9 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	Service.connected = false;
 	Service.errormessage = [];
 	// Default server settings, will be overwritten by a server message
-	Service.setting = {'autoregister':false, 'isivrmode':true};
+	Service.setting = {'autoregister':false, 'isivrmode':true,
+			'messageCannotRegister':'','messageGenericError':'','messageInvalidKey':'','messageMustConfirmRegistration':'',
+			'messagePleaseWait':'','messageRegistrationComplete':'','messageRegistrationIvr':'','messageUnregistrationSuccessful':'','messageWelcome':''};
 	
 	//console.log(authCookie);
 	// Find out where my server is located (relative to this file), so I can call back to it using websockets
@@ -270,6 +272,15 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 					// Load up some system-wide settings that might change how everything works
 					Service.setting.isivrmode = data.setting.isivrmode;
 					Service.setting.autoregister = data.setting.autoregister;
+					Service.setting.messageCannotRegister = data.setting.messageCannotRegister;
+					Service.setting.messageGenericError = data.setting.messageGenericError;
+					Service.setting.messageInvalidKey = data.setting.messageInvalidKey;
+					Service.setting.messageMustConfirmRegistration = data.setting.messageMustConfirmRegistration;
+					Service.setting.messagePleaseWait = data.setting.messagePleaseWait;
+					Service.setting.messageRegistrationComplete = data.setting.messageRegistrationComplete;
+					Service.setting.messageRegistrationIvr = data.setting.messageRegistrationIvr;
+					Service.setting.messageUnregistrationSuccessful = data.setting.messageUnregistrationSuccessful;
+					Service.setting.messageWelcome = data.setting.messageWelcome;
 				}
 			});
 		}   

@@ -14,6 +14,7 @@ import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
 import org.sleekwater.switchboard.Settings;
+import org.sleekwater.switchboard.Switchboard;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.exception.PlivoException;
@@ -48,7 +49,7 @@ public class PlayAudio extends HttpServlet {
 		if (d == null)
 		{
 			System.out.println("No device found to play");
-			String errorXml = "<Response><Speak voice=\"WOMAN\">Sorry, your phone number has not been found.</Speak></Response>";
+			String errorXml = "<Response><Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError +"</Speak></Response>";
 			response.addHeader("Content-Type", "text/xml");
 			response.getWriter().print(errorXml);
 			return;			
