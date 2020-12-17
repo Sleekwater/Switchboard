@@ -1,6 +1,7 @@
 package org.sleekwater.switchboard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,17 +50,17 @@ public final class Devices {
 	public Boolean add(String number, String registerChannel)
 	{
 		Device d = new Device();
-		
+
 		// Testing setup
 		/*		Recording r = new Recording();
 				r.url="woo";
 				r.duration = "100";
 				d.recordings.add(r);
-			*/
+		 */
 		// 
 		//d.cueText = Texts.t.get("a");
 		//d.cueAudio = Audios.a.get("Ringing_Phone.mp3");
-		
+
 		d.state = DeviceState.IDLE;
 		if (registerChannel.equals("phone"))
 			d.state = DeviceState.BUSY;
@@ -75,8 +76,8 @@ public final class Devices {
 				return true;
 			}
 		}
-		
-		
+
+
 		return false;
 	}	
 
@@ -122,7 +123,7 @@ public final class Devices {
 		}
 		return true;
 	}
-	
+
 	public Boolean ivr(String number, String CallUUID)
 	{
 		synchronized(devices)
@@ -146,7 +147,7 @@ public final class Devices {
 				return false;
 			d.hangup();
 			d.state = DeviceState.IDLE;
-			
+
 			d.call_uuid = "";
 			if (d.currentTransfer != null)
 			{
@@ -160,7 +161,7 @@ public final class Devices {
 			{
 				d.addAudit("CALL FAILED because " + hangupCause);
 			}
-			
+
 			d.broadcastChange("hangup");
 		}
 		return true;
@@ -179,7 +180,7 @@ public final class Devices {
 		}
 		return true;
 	}
-	
+
 	public static Boolean updateProgress(String number, String newProgress)
 	{
 		synchronized(devices)
@@ -337,7 +338,7 @@ public final class Devices {
 		return true;
 	}
 
-	
+
 	public static void patch(String numberA, String numberB) {
 		synchronized(devices)
 		{
@@ -370,6 +371,25 @@ public final class Devices {
 				d.broadcastChange("direct");
 			}
 		}
+	}
+
+	/**
+	 * Get a date-sorted list of all audit messages from all devices
+	 */
+	public List<AuditEntry> getFullAudit()
+	{
+		List<AuditEntry> fullAudit = new ArrayList<AuditEntry>();
+
+		synchronized(devices)
+		{
+			for (Device d : devices.values())
+			{
+				fullAudit.addAll(d.audit);
+			}
+		}
+		Collections.sort(fullAudit);
+		
+		return fullAudit;
 	}
 
 }

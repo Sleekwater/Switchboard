@@ -522,6 +522,11 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		window.location.assign('Backup');
 	};
 	
+	$scope.saveFullAudit = function () {
+		console.log("Saving full device audit trail...")
+		window.location.assign('FullAudit');
+	};
+	
 	/* Do the Goal UI panel */
 	$scope.activeGoal = null;
 

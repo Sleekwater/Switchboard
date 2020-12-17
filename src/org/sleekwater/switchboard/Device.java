@@ -32,7 +32,7 @@ public class Device {
 
 	public String name;	// Can be edited by console
 	public String number;	// Unique key
-	public List<String> audit = new ArrayList<String>();	// Our audit trail
+	public List<AuditEntry> audit = new ArrayList<AuditEntry>();	// Our audit trail
 	public Integer unreadMessages = 0;
 	public DeviceState state = DeviceState.IDLE;
 	// If there's an active call, stash the Plivo ID for it here
@@ -68,8 +68,8 @@ public class Device {
 	private void toJson(JsonObjectBuilder jsonBuilder)
 	{
 		JsonArrayBuilder auditBuilder = Json.createArrayBuilder();
-		for(String a : audit) {
-			auditBuilder.add(a);
+		for(AuditEntry a : audit) {
+			a.toJson(auditBuilder);
 		}
 
 		JsonArrayBuilder recordingBuilder = Json.createArrayBuilder();
@@ -387,7 +387,7 @@ public class Device {
 	public void addAudit(String string) {
 		Calendar cal = Calendar.getInstance();
 		// Always add to the head...
-		this.audit.add(0, new SimpleDateFormat("HH:mm:ss").format(cal.getTime()) + ":" + string);
+		this.audit.add(0, new AuditEntry(this, cal.getTime(), string));
 	}
 
 	// Clear any existing cue - this may get reset by a goal, but it might not...
