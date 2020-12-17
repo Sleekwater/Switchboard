@@ -180,6 +180,7 @@ public final class Audios {
 			r = children.get(randomNum);
 		}
 		System.out.println("Returning audio: " + r);
+		d.addAudit("Random audio '" + r.name + "' from folder '" + folder.name + "' ( "+ unplayed.size() + " unplayed of " + children.size() + ")");
 		return r;
 	}
 }
