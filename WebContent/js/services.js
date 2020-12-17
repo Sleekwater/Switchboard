@@ -30,7 +30,8 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	// Default server settings, will be overwritten by a server message
 	Service.setting = {'autoregister':false, 'isivrmode':true,
 			'messageCannotRegister':'','messageGenericError':'','messageInvalidKey':'','messageMustConfirmRegistration':'',
-			'messagePleaseWait':'','messageRegistrationComplete':'','messageRegistrationIvr':'','messageUnregistrationSuccessful':'','messageWelcome':''};
+			'messagePleaseWait':'','messageRegistrationComplete':'','messageRegistrationIvr':'','messageUnregistrationSuccessful':'','messageWelcome':'',
+			'isheartbeat':false, 'heartbeatnumber':''};
 	
 	//console.log(authCookie);
 	// Find out where my server is located (relative to this file), so I can call back to it using websockets
@@ -272,6 +273,8 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 					// Load up some system-wide settings that might change how everything works
 					Service.setting.isivrmode = data.setting.isivrmode;
 					Service.setting.autoregister = data.setting.autoregister;
+					Service.setting.isheartbeat = data.setting.isheartbeat;
+					Service.setting.heartbeatnumber = data.setting.heartbeatnumber;
 					Service.setting.messageCannotRegister = data.setting.messageCannotRegister;
 					Service.setting.messageGenericError = data.setting.messageGenericError;
 					Service.setting.messageInvalidKey = data.setting.messageInvalidKey;

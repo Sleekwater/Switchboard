@@ -26,12 +26,14 @@ import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
  * @author sleekwater
  *
  */
-public final class Switchboard {
+public final class Switchboard implements Runnable {
 
 	public static Switchboard s = new Switchboard();
 
 	public boolean isIVR = true;
 	public boolean isAutoregister = false;
+	public boolean isHeartbeat = false;
+	public String heartbeatNumber = "";
 
 	// Defaults for the server messages
 	public String messageWelcome = "Welcome to the switchboard. Press 1 to register for the performance.";
@@ -45,11 +47,17 @@ public final class Switchboard {
 	public String messageUnregistrationSuccessful = "Thank you. You are now unregistered, and will not take any further part in the performance.";
 	public String messagePleaseWait = "Your call is in a queue. It will be answered as soon as possible. Please hold";
 
+	// Is the heartbeat process running? It's an independant thread, and sends a message at regular intervals
+	private Thread heartbeatThread;
+	// Cheap and cheerful interthread communication
+	Boolean shouldHeartbeatStop = false;
+
 
 	// Default noargs ctor - this is a singleton so only should happen once
 	public Switchboard()
 	{
 		load();
+		setupHeartbeat(false);
 	}
 	
 	// Parse the JSON into our object for ease of use; this is the reverse of toJson
@@ -59,6 +67,10 @@ public final class Switchboard {
 			isIVR = o.getBoolean("isivrmode");
 		if (o.containsKey("autoregister"))
 			isAutoregister = o.getBoolean("autoregister");
+		if (o.containsKey("isheartbeat"))
+			isHeartbeat = o.getBoolean("isheartbeat");
+		if (o.containsKey("heartbeatnumber"))
+			heartbeatNumber = o.getString("heartbeatnumber");
 
 		if (o.containsKey("messageCannotRegister"))
 			messageCannotRegister = o.getString("messageCannotRegister");
@@ -93,6 +105,8 @@ public final class Switchboard {
 		JsonObjectBuilder settings = Json.createObjectBuilder()
 				.add("isivrmode", isIVR)
 				.add("autoregister", isAutoregister)
+				.add("isheartbeat", isHeartbeat)
+				.add("heartbeatnumber", heartbeatNumber)
 				.add("messageCannotRegister", messageCannotRegister)
 				.add("messageGenericError", messageGenericError)
 				.add("messageInvalidKey", messageInvalidKey)
@@ -149,6 +163,86 @@ public final class Switchboard {
 			}
 
 		}		
+	}
+
+	
+	/**
+	 * Where do heartbeat messages go to?
+	 */
+	private Device recipient = null;
+	
+	/**
+	 * Look at if we should have a heartbeat process running or not, and update the heartbeat thread accordingly
+	 */
+	public void setupHeartbeat(Boolean notifyOfStart) {
+		synchronized (shouldHeartbeatStop) {
+			if (isHeartbeat)
+			{
+				// Are we already running?
+				if (null==heartbeatThread)
+				{
+					if (heartbeatNumber.length() > 0)
+					{
+						// Nope, so start it up				
+						recipient = new Device();
+						recipient.number = heartbeatNumber;
+						if (notifyOfStart)
+						{
+							// Don't tell if the server is starting up, as that's quite irritating
+							recipient.Sms("Switchboard heartbeat started. You will get one SMS every hour from now on. Use the switchboard console to turn this off",null);
+						}
+						heartbeatThread = new Thread(this);
+						heartbeatThread.start();
+					}
+					else
+					{
+						// Not a valid number, so don't do anything yet
+					}
+				}
+			}
+			else
+			{
+				if (null != heartbeatThread)
+				{
+					shouldHeartbeatStop = true; 				
+				}
+			}		
+	}
+			
+		
+	}
+
+	/**
+	 * Called by the heartbeat thread, to start our monitoring and send a regular SMS to the device
+	 */
+	@Override
+	public void run() {
+		shouldHeartbeatStop = false;
+
+		
+		// Seconds in an hour...
+		int countdown = 3600;
+		do
+		{
+			// Main monitoring loop, one per second		
+			// In case it's changed since the thread was started...
+			recipient.number = heartbeatNumber;
+			// This is hardly precise, but I don't need precision here
+			try {
+				if (--countdown <=0)
+				{
+					recipient.Sms("Switchboard is OK",null);
+					countdown = 3600;
+				}
+				
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Don't care, carry on
+			}
+		}
+		while (!shouldHeartbeatStop);
+		recipient.Sms("Switchboard heartbeat stopped by the console. You will no longer get heartbeat SMS messages",null);
+		heartbeatThread = null;
 	}
 
 }

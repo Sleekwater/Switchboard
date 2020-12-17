@@ -76,6 +76,17 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
 	}
 	
+	$scope.heartbeat= function() {
+		$scope.setting.isheartbeat= !$scope.setting.isheartbeat;
+		// Tell the server, as different things happen based on this
+		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
+	}
+	
+	$scope.saveHeartbeat= function() {
+		// heartbeatnumber should have been set - Tell the server, as different things happen based on this
+		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
+	}
+	
 	$scope.autoRegister = function() {
 		$scope.setting.autoregister = !$scope.setting.autoregister
 		// Tell the server, as different things happen based on this

@@ -259,8 +259,12 @@ public class ClientWebsocketServlet {
 			{
 				Switchboard.s.parseJson(setting);
 				Switchboard.s.persist();
+				
 				// Tell everyone about this...
 				sessionHandler.Broadcast(o);
+				
+				// And do any heartbeat changes that I need
+				Switchboard.s.setupHeartbeat(true);
 			}
 	
 		}

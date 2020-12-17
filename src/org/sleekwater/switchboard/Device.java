@@ -90,7 +90,7 @@ public class Device {
 		}
 		jsonBuilder.add("device", Json.createObjectBuilder()
 				.add("number", number)
-				.add("name", name)
+				.add("name", null==name? number : name)
 				.add("audit", auditBuilder.build())
 				.add("unreadmessages", unreadMessages)
 				.add("state", state.toString())
