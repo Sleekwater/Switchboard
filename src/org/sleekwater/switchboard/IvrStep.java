@@ -278,10 +278,20 @@ public class IvrStep {
 	 */
 	public IvrStep parseDigits(String digits, Device d) {
 
-		if ((null == digits || digits.length() == 0) && "start".equalsIgnoreCase(this.name))
+		if ("start".equalsIgnoreCase(this.name))
 		{
 			// Do the start step if we're jumping straight to it
 			return this;
+		}
+		
+		if (null == digits || digits.length() == 0)
+		{
+			// Is there a default "none" mapped?
+			if (keys.containsKey("x"))
+			{
+				String target = keys.get(digits);
+				return IvrSteps.i.get(target);
+			}
 		}
 
 		// Is there a special step defined? 

@@ -782,7 +782,10 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 					if (i>0)
 						src += ", ";
 					if (key.key){
-						src += " [" + key.key +"] "
+						if (key.key=="x")
+							src += " [None]";
+						else
+							src += " [" + key.key +"] "
 					}
 					else {
 						src += " [<key not set>] "
