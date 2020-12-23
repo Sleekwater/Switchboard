@@ -668,6 +668,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		newIvrstep.audio="";
 		newIvrstep.state="IDLE";
 		newIvrstep.keys = [];
+		newIvrstep.specialkey="";
 		$scope.ivrsteps.push(newIvrstep)
 		$scope.activeIvrstep = newIvrstep;
 	}
@@ -698,9 +699,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	}
 	$scope.describeIvrstep = function(ivrstep)
 	{
-		// Special cases
-		if (ivrstep.name =="resume")
-			return "resume: Resume the call from the last place reached in the IVR menu";
+		// Special cases		
 		if (ivrstep.name =="callback")
 			return "callback: Drop this call and start a new call to the device";
 		
@@ -763,7 +762,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 
 		// List keys
 		try{
-			if (ivrstep.keys.length == 0 || ivrstep.steptype!="playaudio")
+			if ((ivrstep.keys.length == 0 || ivrstep.steptype!="playaudio") && ivrstep.name != "resume")
 			{
 				if (ivrstep.defaultkey.length==0)
 				{
@@ -797,6 +796,8 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 						src += " <step not set> "
 					}
 				}
+				if (ivrstep.name =="resume")
+					src += " [" + ivrstep.specialkey + "] resumes from last step";
 			}
 		}
 		catch (err){}

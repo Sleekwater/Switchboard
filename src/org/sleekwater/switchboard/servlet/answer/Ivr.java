@@ -65,7 +65,7 @@ public class Ivr extends HttpServlet {
 			IvrStep nextStep = null;
 			if (null != currentStep)
 			{
-				nextStep = currentStep.parseDigits(digits);
+				nextStep = currentStep.parseDigits(digits, d);
 				System.out.println("nextStep is " + nextStep);
 			}
 			

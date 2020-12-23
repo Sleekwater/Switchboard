@@ -30,6 +30,7 @@ public class IvrStep {
 	public IvrState state = IvrState.IDLE;	
 	public String steptype = "playaudio";// sendtext, record
 	public String defaultKey = "";	// If no key pressed (or it can't be pressed)
+	public String specialKey = "";	// Some steps have a "special" option - e.g. resume - and this is the key that maps to the special option
 	JsonObject text =  Json.createObjectBuilder().build();	// By default, an empty object
 	public String recordTime = "";	// if steptype=record then how long should it record for?
 
@@ -72,6 +73,8 @@ public class IvrStep {
 			this.recordTime = o.getString("recordtime");
 		}
 
+		if (o.containsKey("specialkey"))
+			this.specialKey = o.getString("specialkey");
 	}
 
 	/**
@@ -125,6 +128,7 @@ public class IvrStep {
 				.add("text", text)
 				.add("keys", keyBuilder)
 				.add("defaultkey", defaultKey)
+				.add("specialkey", specialKey)
 				.add("recordtime", recordTime)				
 				.add("steptype", steptype)
 				.add("state", state.toString());
@@ -146,6 +150,14 @@ public class IvrStep {
 		String result = "";
 		if (null == this.name || this.name.length() == 0) {
 			result += "Name not set";
+		}
+		
+		if ("resume".equalsIgnoreCase(name))
+		{
+			if (specialKey.length() == 0)
+			{
+				result += " Resume key not set";
+			}
 		}
 		if ("playaudio".equalsIgnoreCase(steptype))
 		{
@@ -264,7 +276,7 @@ public class IvrStep {
 	 * @param digits
 	 * @return
 	 */
-	public IvrStep parseDigits(String digits) {
+	public IvrStep parseDigits(String digits, Device d) {
 
 		if ((null == digits || digits.length() == 0) && "start".equalsIgnoreCase(this.name))
 		{
@@ -272,6 +284,19 @@ public class IvrStep {
 			return this;
 		}
 
+		// Is there a special step defined? 
+		if (this.specialKey.equalsIgnoreCase(digits))
+		{
+			// Are we the "resume" step?
+			if (this.name.equalsIgnoreCase("resume"))
+			{
+				// Yep, so let's grab the name of the last step this device reached, and use that instead
+				IvrStep lastStepReached = IvrSteps.i.get(d.progress);
+				if (null != lastStepReached)
+					return lastStepReached;
+			}
+		}
+		
 		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
 		if (!"playaudio".equalsIgnoreCase(this.steptype))
 		{

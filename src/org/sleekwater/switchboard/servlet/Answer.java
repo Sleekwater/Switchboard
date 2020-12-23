@@ -114,6 +114,11 @@ public class Answer extends HttpServlet {
 					// Start step always exists...
 					currentStep = IvrSteps.i.getStep("start");
 				}
+				else
+				{
+					// Resume step always exists...
+					currentStep = IvrSteps.i.getStep("resume");		
+				}
 				if (null != d)
 				{
 					d.updateIvrProgress(currentStep);					
