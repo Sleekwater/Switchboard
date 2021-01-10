@@ -90,6 +90,10 @@ public final class Switchboard implements Runnable {
 			messageUnregistrationSuccessful = o.getString("messageUnregistrationSuccessful");
 		if (o.containsKey("messageWelcome"))
 			messageWelcome = o.getString("messageWelcome");
+		
+		// Allow the callback URL to be edited, as I keep getting this wrong
+		if (o.containsKey("callbackUrl") && o.containsKey("callbackUrl".length()>0))
+			Settings.s.callbackUrl = o.getString("callbackUrl");
 	}
 
 	public String toString()
@@ -115,7 +119,8 @@ public final class Switchboard implements Runnable {
 				.add("messageRegistrationComplete", messageRegistrationComplete)
 				.add("messageRegistrationIvr", messageRegistrationIvr)
 				.add("messageUnregistrationSuccessful", messageUnregistrationSuccessful)
-				.add("messageWelcome", messageWelcome);
+				.add("messageWelcome", messageWelcome)
+				.add("callbackUrl", Settings.s.callbackUrl );
 
 		message.add("setting", settings);
 	}

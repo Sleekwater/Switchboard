@@ -82,8 +82,8 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
 	}
 	
-	$scope.saveHeartbeat= function() {
-		// heartbeatnumber should have been set - Tell the server, as different things happen based on this
+	$scope.saveSettings= function() {
+		// Something has been changed - Tell the server, as different things happen based on this
 		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
 	}
 	

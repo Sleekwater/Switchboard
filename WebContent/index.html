@@ -497,15 +497,17 @@
 						</div>
 						<button ng-click="setupMode()" ng-class="{selected: issetup}">Setup</button>&nbsp;Show additional controls in the UI for setup before the performance<br/>
 						<button ng-click="logoff()">Logoff</button>&nbsp;Log off from the console
+						
 						<h5>Server</h5>
 						<div>These settings apply to the server, and will be reflected in all connected consoles</div>
 						<button ng-click="heartbeat()" ng-class="{selected: setting.isheartbeat}">Heartbeat</button>&nbsp;Send a "heartbeat" sms every hour to check the switchboard is running<br/>
 						<span ng-show="setting.isheartbeat">
 							The number to send the heartbeat message to<br/>
 							<input ng-model="setting.heartbeatnumber" placeholder="Phone number with international prefix"> 
-							<button class="go" ng-click = "saveHeartbeat()">Save</button><br/>
+							<button class="go" ng-click = "saveSettings()">Save</button><br/>
 						</span>
 						
+						<input style="font-size:1em" ng-model="setting.callbackUrl" placeholder="URL with trailing / ">&nbsp;The fully-qualified URL that this server is hosted on, so Plivo can contact us&nbsp;<button class="go" ng-click = "saveSettings()">Save</button> <br/>			
 						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices from the performance. This cannot be undone.<br/>					
 						<button ng-click="ivrMode()" ng-class="{selected: setting.isivrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu if enabled, or use goals for automation<br/>
 						<button ng-click="autoRegister()" ng-class="{selected: setting.autoregister}">Registration</button>&nbsp;Can devices register themselves by phoning the switchboard?<br/>
