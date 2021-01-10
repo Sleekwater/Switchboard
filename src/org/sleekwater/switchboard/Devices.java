@@ -303,7 +303,7 @@ public final class Devices {
 				rec.url = url;
 				rec.duration = duration;
 				d.recordings.add(rec);			
-				d.addAudit("Message recorded");
+				d.addAudit("Message recorded: " + rec.url);
 				d.broadcastChange("recording");
 			}
 		}
@@ -375,20 +375,27 @@ public final class Devices {
 
 	/**
 	 * Get a date-sorted list of all audit messages from all devices
+	 * - can be grouped by device
 	 */
-	public List<AuditEntry> getFullAudit()
+	public List<AuditEntry> getFullAudit(Boolean groupByDevice)
 	{
 		List<AuditEntry> fullAudit = new ArrayList<AuditEntry>();
 
 		synchronized(devices)
 		{
+			// The audit of each device in a chronological order, then the next device
 			for (Device d : devices.values())
 			{
-				fullAudit.addAll(d.audit);
+				List<AuditEntry> deviceAudit = new ArrayList<AuditEntry>();
+				deviceAudit.addAll(d.audit);
+				Collections.sort(deviceAudit);			
+				fullAudit.addAll(deviceAudit);
 			}
-		}
-		Collections.sort(fullAudit);
-		
+			
+			// And sort all the entries if we're not grouping
+			if (!groupByDevice)
+				Collections.sort(fullAudit);			
+		}		
 		return fullAudit;
 	}
 

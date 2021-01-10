@@ -34,7 +34,6 @@ public class FullAudit extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	static final int BUFFER = 1024;
 	List<File> fileList = new ArrayList<File>();
-	File directoryToZip = null;
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
 	/** Check the auth and then download a csv with the generated file in it*/
@@ -57,11 +56,15 @@ public class FullAudit extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.toString());
 			return;
 		}
-		directoryToZip = new File(Settings.s.uploadDiskPath);
-
+		
+		Boolean groupByDevice = true;
+		if (null != req.getParameter("group"))
+		{
+			groupByDevice = "true".equalsIgnoreCase(req.getParameter("group"));
+		}
 
 		// get the full audit, already sorted
-		List<AuditEntry> fullAudit = Devices.d.getFullAudit();
+		List<AuditEntry> fullAudit = Devices.d.getFullAudit(groupByDevice);
 		
 		// And send the data to the caller
 		resp.setContentType("application/csv");

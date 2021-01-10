@@ -535,7 +535,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	
 	$scope.saveFullAudit = function () {
 		console.log("Saving full device audit trail...")
-		window.location.assign('FullAudit');
+		window.location.assign('FullAudit?group='+$scope.setting.auditgroup);
 	};
 	
 	/* Do the Goal UI panel */

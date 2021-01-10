@@ -31,7 +31,7 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	Service.setting = {'autoregister':false, 'isivrmode':true,
 			'messageCannotRegister':'','messageGenericError':'','messageInvalidKey':'','messageMustConfirmRegistration':'',
 			'messagePleaseWait':'','messageRegistrationComplete':'','messageRegistrationIvr':'','messageUnregistrationSuccessful':'','messageWelcome':'',
-			'isheartbeat':false, 'heartbeatnumber':'', 'callbackUrl':''};
+			'isheartbeat':false, 'heartbeatnumber':'', 'callbackUrl':'', auditgroup:true};
 	
 	//console.log(authCookie);
 	// Find out where my server is located (relative to this file), so I can call back to it using websockets
