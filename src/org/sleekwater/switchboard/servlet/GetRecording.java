@@ -15,6 +15,7 @@ import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.IvrStep;
 import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Settings;
+import org.sleekwater.switchboard.Switchboard;
 
 import com.plivo.helper.exception.PlivoException;
 import com.plivo.helper.xml.elements.Play;
@@ -46,6 +47,10 @@ public class GetRecording extends HttpServlet {
 			deviceNumber = deviceNumber.substring(1, deviceNumber.length());
 		
 		Device d = Devices.d.get(deviceNumber);
+		String xml = "<Response>"
+				+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError
+				+ "</Speak>"
+				+ "</Response>";;
 		
 		String recordUrl = request.getParameter("RecordUrl");
 		String recordDuration = request.getParameter("RecordingDuration");
@@ -54,25 +59,29 @@ public class GetRecording extends HttpServlet {
 		// OK, was this recording as part of an IVR menu? Then we'll need to chain to the next step for this device in the IVR menu
 		if (map.containsKey("ivr"))
 		{
-			PlivoResponse resp = new PlivoResponse();
-			IvrStep thisStep = IvrSteps.i.get(d.progress); // Should be a record step, otherwise why are we in the recording servlet?
-			IvrStep nextStep = IvrSteps.i.get(thisStep.defaultKey);
-			try {
-				nextStep.buildPlivoIvrResponse(resp, d, 0);
-				// Remember where we are, so that the next callback will go to the right place in the menu system
-				if (null != d)
-				{
+			if (null != d)
+			{
+				PlivoResponse resp = new PlivoResponse();
+				IvrStep thisStep = IvrSteps.i.get(d.progress); // Should be a record step, otherwise why are we in the recording servlet?
+				IvrStep nextStep = IvrSteps.i.get(thisStep.defaultKey);
+				try {
+					nextStep.buildPlivoIvrResponse(resp, d, 0);
+					// Remember where we are, so that the next callback will go to the right place in the menu system
 					d.updateIvrProgress(nextStep);					
-				}
-			} catch (PlivoException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					xml = resp.toXML();
+				} catch (PlivoException e) {	
+					System.out.println("Failed while parsing recording for IVR: " + deviceNumber);	
+					e.printStackTrace();
+				}				
 			}
-			String xml = resp.toXML();
+			else
+			{
+				System.out.println("Device not found: " + deviceNumber);						
+			}
+			System.out.println("Plivo XML (record) is : " + xml);
 			response.getWriter().write(xml);
 			response.addHeader("content-type", "application/xml");
 		}
-		
 		super.doPost(request, response);
 	}
 }

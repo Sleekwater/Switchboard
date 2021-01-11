@@ -151,7 +151,7 @@ public class Answer extends HttpServlet {
 						+ "</GetDigits></Response>";
 			}
 		}
-		System.out.println("Plivo XML is : " + xml);
+		System.out.println("Plivo XML (answer) is : " + xml);
 		
 		response.getWriter().write(xml);
 		response.addHeader("content-type", "application/xml");

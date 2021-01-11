@@ -99,7 +99,7 @@ public class Ivr extends HttpServlet {
 			System.out.println("Failed to parse ivrstep " + e);
 		}
 		
-		System.out.println("Plivo XML is : " + xml);
+		System.out.println("Plivo XML (ivr) is : " + xml);
 		
 		response.getWriter().write(xml);
 		response.addHeader("content-type", "application/xml");

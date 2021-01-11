@@ -287,24 +287,31 @@ public final class Devices {
 
 		synchronized(devices)
 		{
-			Device d = devices.get(number);
-			if (null != d)
+			try
 			{
-				// We get called several times for the recording, so debounce on the URL
-				for (Recording r : d.recordings)
+				Device d = devices.get(number);
+				if (null != d)
 				{
-					if (r.url.equals(url))
+					// We get called several times for the recording, so debounce on the URL
+					for (Recording r : d.recordings)
 					{
-						// Already got this one, so ignore this
-						return false;
+						if (r.url.equals(url))
+						{
+							// Already got this one, so ignore this
+							return false;
+						}
 					}
+					Recording rec = new Recording();
+					rec.url = url;
+					rec.duration = duration;
+					d.recordings.add(rec);			
+					d.addAudit("Message recorded: " + rec.url);
+					d.broadcastChange("recording");
 				}
-				Recording rec = new Recording();
-				rec.url = url;
-				rec.duration = duration;
-				d.recordings.add(rec);			
-				d.addAudit("Message recorded: " + rec.url);
-				d.broadcastChange("recording");
+			}
+			catch (Exception e)
+			{
+				System.out.println("Could not add recording for: " + number + " url: " + url + " duration " + duration);
 			}
 		}
 

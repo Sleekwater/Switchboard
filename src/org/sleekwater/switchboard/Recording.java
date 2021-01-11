@@ -9,7 +9,10 @@ public class Recording {
 	public String duration;
 	
 	public void toJson(JsonObjectBuilder jsonBuilder) {
-		jsonBuilder.add("url", url).add("duration", duration);
+		if (null != url)
+			jsonBuilder.add("url", url);
+		if (null != duration)
+			jsonBuilder.add("duration", duration);
 	}
 
 }
