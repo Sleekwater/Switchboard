@@ -9,6 +9,7 @@ public class Settings {
     public String uploadDiskPath="";
     public String uploadDirectory  = "";
     public String callbackUrl = ""; // Must end with a /
+    public String originalCallbackUrl = "";
 	public String plivo_auth_id;
 	public String plivo_auth_token;
 	public String plivo_registerednumber;    

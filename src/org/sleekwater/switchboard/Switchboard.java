@@ -92,8 +92,17 @@ public final class Switchboard implements Runnable {
 			messageWelcome = o.getString("messageWelcome");
 		
 		// Allow the callback URL to be edited, as I keep getting this wrong
-		if (o.containsKey("callbackUrl") && o.containsKey("callbackUrl".length()>0))
-			Settings.s.callbackUrl = o.getString("callbackUrl");
+		if (o.containsKey("callbackUrl"))
+		{
+			if (o.getString("callbackUrl").length()==0)
+			{
+				// Reset to web.xml
+				Settings.s.callbackUrl = Settings.s.originalCallbackUrl;
+			}
+			else {
+				Settings.s.callbackUrl = o.getString("callbackUrl");
+			}				
+		}
 	}
 
 	public String toString()
