@@ -47,9 +47,8 @@ public class GetRecording extends HttpServlet {
 			deviceNumber = deviceNumber.substring(1, deviceNumber.length());
 		
 		Device d = Devices.d.get(deviceNumber);
-		String xml = "<Response>"
-				+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError
-				+ "</Speak>"
+		String xml = "<Response>" +
+				Switchboard.s.getMessageGenericError()
 				+ "</Response>";;
 		
 		String recordUrl = request.getParameter("RecordUrl");

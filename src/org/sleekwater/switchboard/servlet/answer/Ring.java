@@ -46,7 +46,7 @@ public class Ring extends HttpServlet {
 		
 		String from = request.getParameter("From");
 		String digits = request.getParameter("Digits");
-		String xml = "<Response><Speak voice=\"WOMAN\">"+  Switchboard.s.messageGenericError +"</Speak></Response>";
+		String xml = "<Response>"+  Switchboard.s.getMessageGenericError() +"</Response>";
 		String url = request.getRequestURL().toString() + "/Unregister";
 
 		// OK, we've had the ringing. We've had a key pressed while ringing.
@@ -58,7 +58,7 @@ public class Ring extends HttpServlet {
 				
 				// Tell plivo that we're done
 				xml = "<Response>"
-						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageUnregistrationSuccessful + "</Speak>"
+						+ Switchboard.s.getMessageUnregistrationSuccessful() 
 						+ "</Response>";
 			}
 			else
@@ -66,7 +66,7 @@ public class Ring extends HttpServlet {
 				// Todo - work out what happens with a timeout...
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"10\">"
-						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messagePleaseWait + "</Speak>"
+						+ Switchboard.s.getMessagePleaseWait() 
 						+ "</GetDigits></Response>";				
 			}
 			

@@ -67,7 +67,7 @@ public class Answer extends HttpServlet {
 		
 		String from = request.getParameter("From");
 		String CallUUID = request.getParameter("CallUUID");
-		String xml = "<Response><Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError + "</Speak></Response>";
+		String xml = "<Response>" + Switchboard.s.getMessageGenericError() + "</Response>";
 		String url = request.getRequestURL().toString();
 		
 		// Are we registering?
@@ -77,14 +77,14 @@ public class Answer extends HttpServlet {
 			if (!Switchboard.s.isAutoregister)
 			{
 				xml = "<Response>"+
-						"<Speak voice=\"WOMAN\">"+ Switchboard.s.messageCannotRegister + "</Speak>"
-					+ "</Response>";
+						Switchboard.s.getMessageCannotRegister() + 
+						"</Response>";
 			}
 			else
 			{
 				String plivoXML = Goals.checkGoal("registeraudiostart", null, null);
 				if (null == plivoXML)
-					plivoXML = "<Speak voice=\"WOMAN\">" + Switchboard.s.messageWelcome +"</Speak>";
+					plivoXML = Switchboard.s.getMessageWelcome();
 				// Return the registration XML, and point Plivo to the next servlet
 				
 				// Do the "thank you for registering" message

@@ -35,7 +35,7 @@ public class Register extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Answer/Register/POST");
 		String from = request.getParameter("From");
-		String xml = "<Response><Speak voice=\"WOMAN\">" +  Switchboard.s.messageGenericError + "</Speak></Response>";
+		String xml = "<Response>" +  Switchboard.s.getMessageGenericError() + "</Response>";
 		String url = request.getRequestURL().toString() + "/Unregister";
 		String digits = "";
 		try
@@ -55,11 +55,11 @@ public class Register extends HttpServlet {
 				Device d = Devices.d.get(from);
 				String plivoXML = Goals.checkGoal("registeraudiofinish", null, d);
 				if (null == plivoXML)
-					plivoXML = "<Speak voice=\"WOMAN\">" + Switchboard.s.messageRegistrationComplete + "</Speak>";
+					plivoXML = Switchboard.s.getMessageRegistrationComplete();
 				if (Switchboard.s.isIVR)
 				{
 					// drop straight into the Ivr system after registration, as it's too fiddly to have to ring up twice.
-					plivoXML = "<Speak voice=\"WOMAN\">" + Switchboard.s.messageRegistrationIvr +"</Speak>"
+					plivoXML = Switchboard.s.getMessageRegistrationIvr() 
 							+ "<Redirect>"+ Settings.s.callbackUrl + "Answer/Ivr</Redirect>";
 				}
 				
@@ -71,8 +71,7 @@ public class Register extends HttpServlet {
 			else
 			{
 				xml = "<Response>"
-						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageMustConfirmRegistration 
-						+ "</Speak>"
+						+ Switchboard.s.getMessageMustConfirmRegistration() 
 						+ "</Response>";
 			}			
 		}

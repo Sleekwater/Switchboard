@@ -48,8 +48,7 @@ public class Ivr extends HttpServlet {
 	    };
 		
 		String xml = "<Response>"
-				+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError
-				+ "</Speak>"
+				+ Switchboard.s.getMessageGenericError()
 				+ "</Response>";
 		String from = request.getParameter("From");
 		String digits = request.getParameter("Digits");
@@ -86,8 +85,7 @@ public class Ivr extends HttpServlet {
 			{
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ "<Speak voice=\"WOMAN\">" + Switchboard.s.messageInvalidKey 
-						+ "</Speak>"
+						+ Switchboard.s.getMessageInvalidKey()
 						+ "</Response>";
 				
 			}

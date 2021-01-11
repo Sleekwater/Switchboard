@@ -49,7 +49,7 @@ public class PlayAudio extends HttpServlet {
 		if (d == null)
 		{
 			System.out.println("No device found to play");
-			String errorXml = "<Response><Speak voice=\"WOMAN\">" + Switchboard.s.messageGenericError +"</Speak></Response>";
+			String errorXml = "<Response>" + Switchboard.s.getMessageGenericError() +"</Response>";
 			response.addHeader("Content-Type", "text/xml");
 			response.getWriter().print(errorXml);
 			return;			

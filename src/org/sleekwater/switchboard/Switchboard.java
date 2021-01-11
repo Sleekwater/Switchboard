@@ -36,16 +36,16 @@ public final class Switchboard implements Runnable {
 	public String heartbeatNumber = "";
 
 	// Defaults for the server messages
-	public String messageWelcome = "Welcome to the switchboard. Press 1 to register for the performance.";
-	public String messageMustConfirmRegistration = "I'm sorry, you must press 1 on your keypad to register for the performance. Please try again.";
-	public String messageCannotRegister = "I'm sorry, the switchboard is currently closed for new registrations. Thank you for your interest.";
-	public String messageGenericError ="I'm sorry, there has been a problem. Please try again.";
-	public String messageInvalidKey = "Sorry, that is not a valid key. Please try again.";
-	public String messageRegistrationComplete = "Welcome, and thank you for registering. Press 9 to cancel at any time. "
+	private String messageWelcome = "Welcome to the switchboard. Press 1 to register for the performance.";
+	private String messageMustConfirmRegistration = "I'm sorry, you must press 1 on your keypad to register for the performance. Please try again.";
+	private String messageCannotRegister = "I'm sorry, the switchboard is currently closed for new registrations. Thank you for your interest.";
+	private String messageGenericError ="I'm sorry, there has been a problem. Please try again.";
+	private String messageInvalidKey = "Sorry, that is not a valid key. Please try again.";
+	private String messageRegistrationComplete = "Welcome, and thank you for registering. Press 9 to cancel at any time. "
 			+ "You will be unregistered automatically at the end of the performance.";
-	public String messageRegistrationIvr = "Welcome, and thank you for registering. The performance will start in just a few moments, please wait.";
-	public String messageUnregistrationSuccessful = "Thank you. You are now unregistered, and will not take any further part in the performance.";
-	public String messagePleaseWait = "Your call is in a queue. It will be answered as soon as possible. Please hold";
+	private String messageRegistrationIvr = "Welcome, and thank you for registering. The performance will start in just a few moments, please wait.";
+	private String messageUnregistrationSuccessful = "Thank you. You are now unregistered, and will not take any further part in the performance.";
+	private String messagePleaseWait = "Your call is in a queue. It will be answered as soon as possible. Please hold";
 
 	// Is the heartbeat process running? It's an independant thread, and sends a message at regular intervals
 	private Thread heartbeatThread;
@@ -257,6 +257,64 @@ public final class Switchboard implements Runnable {
 		while (!shouldHeartbeatStop);
 		recipient.Sms("Switchboard heartbeat stopped by the console. You will no longer get heartbeat SMS messages",null);
 		heartbeatThread = null;
+	}
+
+
+	/**
+	 * You can either specify the message, or give the name of an audio file - we return valid plivo XML
+	 * @param input
+	 * @return
+	 */
+	private String getMessage(String input)
+	{
+		input = input.trim();
+		// Is this input actually audio file?
+		
+		// Find if there's an audio with this name...
+		Audio a = Audios.a.get(input);
+		if (null != a)
+		{
+			return "<Play>" + a.getUrl() +"</Play>";
+		}
+		
+		// Nope, text-to-voice instead
+		return "<Speak voice=\"WOMAN\">"+ input + "</Speak>";
+	}
+	
+	public String getMessageCannotRegister() {
+		return getMessage(this.messageCannotRegister);
+	}
+
+	public String getMessageWelcome() {
+		return getMessage(this.messageWelcome);
+	}
+
+	public String getMessageGenericError() {
+		return getMessage(this.messageGenericError);
+	}
+
+	public String getMessageInvalidKey() {
+		return getMessage(this.messageInvalidKey);
+	}
+
+	public String getMessageMustConfirmRegistration() {
+		return getMessage(this.messageMustConfirmRegistration);
+	}
+
+	public String getMessagePleaseWait() {
+		return getMessage(this.messagePleaseWait);	
+	}
+
+	public String getMessageRegistrationComplete() {
+		return getMessage(this.messageRegistrationComplete);
+	}
+
+	public String getMessageRegistrationIvr() {
+		return getMessage(this.messageRegistrationIvr);
+	}
+
+	public String getMessageUnregistrationSuccessful() {
+		return getMessage(this.messageUnregistrationSuccessful);
 	}
 
 }
