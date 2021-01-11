@@ -476,7 +476,7 @@
 							<div ng-show="activeIvrstep.steptype=='record'">							
 								<div class="four columns">
 									<h4>...for up to...</h4>
-									<input ng-model="activeIvrstep.recordtime" style="width:90%;margin:10px;" placeholder="Seconds"> seconds
+									<input ng-model="activeIvrstep.recordtime" style="width:90%;margin:10px;" placeholder="Seconds"> seconds, or until # is pressed
 								</div>
 								<div class="four columns">								
 									<h4>...then goes to step</h4>
@@ -526,7 +526,7 @@
 					<div ng-show="isActivePanel('defaults')">
 						
 						<h5>Default messages</h5>
-						<h5>Use either the name of an audio file or a message for text-to-speech</h5>			
+						<h5>Use either the name of an audio file or any message to use text-to-speech</h5>			
 							When not registered and switchboard registration is turned on
 							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageWelcome">
 							When not registered and switchboard registration is turned off

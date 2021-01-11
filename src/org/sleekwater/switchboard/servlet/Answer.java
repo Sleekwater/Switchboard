@@ -109,7 +109,7 @@ public class Answer extends HttpServlet {
 				Device d = Devices.d.get(from);
 				IvrStep currentStep = IvrSteps.i.getStep(d);
 				// Have we finished (and are restarting?)
-				if (null == currentStep || currentStep.endsCall())
+				if (null == currentStep || currentStep.endsCall() || "start".equalsIgnoreCase(currentStep.name))
 				{
 					// Start step always exists...
 					currentStep = IvrSteps.i.getStep("start");

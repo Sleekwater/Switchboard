@@ -58,7 +58,7 @@ public class Ivr extends HttpServlet {
 		{
 			// OK, we've had the audio message played for this step of the IVR. We've (maybe) had a key pressed - find out what was pressed
 			Device d = Devices.d.get(from);
-			System.out.println("Ivr - do the next step for device " + d);
+			System.out.println("Ivr - do the next step...");
 			IvrStep currentStep = IvrSteps.i.getStep(d);
 			System.out.println("currentStep is " + currentStep);
 			IvrStep nextStep = null;

@@ -83,23 +83,22 @@ public class IvrStep {
 	 */
 	public boolean endsCall()
 	{
-
+		// Resume never ends the call.
+		if ("resume".equalsIgnoreCase(name))
+			return false;
+		
 		if ("playaudio".equalsIgnoreCase(steptype))
 		{
 			if ((null == keys || keys.size() == 0))
 			{
-				System.out.println("Step " + this.name + " ends the call because there are no mapped keys!");
-				return true;
+				if ((null==defaultKey || defaultKey.length()==0))
+				{
+					System.out.println("Step " + this.name + " ends the call because there are no mapped keys and no default key!");
+					return true;
+				}
 			}
 		}
-		else
-		{
-			if ((null==defaultKey || defaultKey.length()==0))
-			{
-				System.out.println("Step " + this.name + " ends the call because there is no default key!");
-			}
-		}
-
+		// There's at least one key or a default set up - so carry on
 		return false;
 	}
 
@@ -250,10 +249,10 @@ public class IvrStep {
 	}
 
 	/**
-	 * Return an absolute url to the audio recording so that Plivo can read it
+	 * Return an audio, normally so that Plivo can read it
 	 * @return
 	 */
-	public String getAudioPath(Device d) {
+	public Audio pickAudio(Device d) {
 		try
 		{
 			Audio a = new Audio(this.audio);
@@ -262,7 +261,7 @@ public class IvrStep {
 				a = Audios.a.getRandomChild(a, d);
 			}
 			System.out.println("Audio path is " + a.getUrl());
-			return a.getUrl();		
+			return a;		
 		}
 		catch (Exception e)
 		{
@@ -278,12 +277,7 @@ public class IvrStep {
 	 */
 	public IvrStep parseDigits(String digits, Device d) {
 
-		if ("start".equalsIgnoreCase(this.name))
-		{
-			// Do the start step if we're jumping straight to it
-			return this;
-		}
-		
+		// Was a key pressed? Does it match something we're expecting?
 		if (null == digits || digits.length() == 0)
 		{
 			// Is there a default "none" mapped?
@@ -341,19 +335,25 @@ public class IvrStep {
 			}
 			if ("playaudio".equalsIgnoreCase(this.steptype))
 			{
+				Audio a = this.pickAudio(d);
 				if (this.endsCall())
 				{
-					resp.append(new Play(this.getAudioPath(d)));
+					resp.append(new Play(a.getUrl()));
 				}
 				else
 				{
 					GetDigits digits = new GetDigits();
 					digits.setAction(Settings.s.callbackUrl + "Answer/Ivr");
+					// Only needed if we have multiple digits (it's the delay between them), but better same than sorry
 					digits.setDigitTimeout(30);
+					// This is how long we need to wait - TODO!
+					//digits.setTimeout(a.lengthInSeconds);
 					digits.setNumDigits(1);
 					digits.setMethod("POST");
-					digits.append(new Play(this.getAudioPath(d)));
+					digits.append(new Play(a.getUrl()));
 					resp.append(digits);
+					// And add in a default as well, so it will fire if no keys are pressed
+					resp.append(new Redirect(Settings.s.callbackUrl + "Answer/Ivr"));
 				}
 			}
 			else if ("sendtext".equalsIgnoreCase(this.steptype))
@@ -394,4 +394,5 @@ public class IvrStep {
 		System.out.println("IVR XML is : " + resp.toXML());
 		return this;
 	}
+
 }
