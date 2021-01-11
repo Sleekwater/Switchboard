@@ -257,14 +257,15 @@
 					
 					<div ng-show="isActivePanel('sms')">
 						<div ng-show="issetup" > 								
-							<input ng-model="currentLabel" style="width:95%;margin:10px; font-size:2em; height:2em;" placeholder="Label">
+							<input ng-model="currentLabel" style="width:85%;margin:10px; font-size:2em; height:2em;" placeholder="Label">
+							<button style="float:right;" ng-click = "addText()" ng-show="issetup">New</button>
 						</div>
 						<textarea ng-trim="false" style="width:95%; margin:10px; font-size:1.5em; height:8em;" "type="text" ng-model="currentText"></textarea>	
 						<br/>
 						<button ng-click = "broadcastText()" ng-class="{go:getNumDevicesSelected() > 0 && currentText}">Send {{getNumDevicesSelected()}}</button>
 						<span>({{currentText.length}} characters, {{1+ ((currentText.length - 81) / 160) | number:0}} texts)</span>
-						<button style="float:right;" ng-show="issetup" ng-click="saveText()">Save</button>
-						<button style="float:right;" ng-click = "addText()" ng-show="issetup">Add</button>
+						<button style="float:right;" ng-show="issetup" ng-click="saveText()" ng-class="{go:(currentText.length>0 && currentLabel.length>0)}">Save</button>
+						
 						<br/>
 						<input ng-model="smsquery" style="width:80%;margin:10px;" placeholder="{{texts.length}} text files">
 												
@@ -413,7 +414,7 @@
 									<button ng-click="addIvrstepKey(activeIvrstep)" class="go" >Add</button>
 									<ul style="overflow-y: scroll; height:300px">
 										<li style="overflow: hidden;" ng-repeat="key in activeIvrstep.keys track by $index ">
-											<select ng-model="key.key" style="width:100px; font-size:1em;">
+											<select ng-model="key.key" style="width:100px; font-size:0.8em;">
 											 	<option value="0">0</option>
 											 	<option value="1">1</option>
 											 	<option value="2">2</option>
@@ -433,7 +434,7 @@
 										</li>
 										<!-- Special case for resume -->
 										<li ng-show="activeIvrstep.name == 'resume'" >
-											<select ng-model="activeIvrstep.specialkey" style="width:100px; font-size:1em;">
+											<select ng-model="activeIvrstep.specialkey" style="width:100px; font-size:0.8em;">
 											 	<option value="0">0</option>
 											 	<option value="1">1</option>
 											 	<option value="2">2</option>
@@ -448,7 +449,7 @@
 											 	<option value="#">#</option>
 											 	<option value="x">None</option>
 											</select> ->
-											<span>Resume from step reached</span>
+											<span>Resumes from last step reached</span>
 										</li>
 									</ul>
 								</div>	

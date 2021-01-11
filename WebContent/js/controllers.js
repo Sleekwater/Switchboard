@@ -317,8 +317,8 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	}
 	$scope.addText = function(text)
 	{
-		var added = {"name":"new text", "label":"label"};
-		$scope.texts.push(added);
+		var added = {"name":"", "label":""};
+		//$scope.texts.push(added);
 		$scope.selectText(added);
 	}
 
@@ -799,8 +799,13 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 						src += " <step not set> "
 					}
 				}
-				if (ivrstep.name =="resume")
-					src += " [" + ivrstep.specialkey + "] resumes from last step";
+				if (ivrstep.name =="resume"){
+					
+					if (ivrstep.specialkey=="x")
+						src += " [None] resumes from step reached";
+					else
+					src += " [" + ivrstep.specialkey + "] resumes from step reached";
+				}
 			}
 		}
 		catch (err){}
