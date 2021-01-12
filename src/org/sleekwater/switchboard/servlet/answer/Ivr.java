@@ -86,7 +86,7 @@ public class Ivr extends HttpServlet {
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
 						+ Switchboard.s.getMessageInvalidKey()
-						+ "</Response>";
+						+ "</GetDigits></Response>";
 				
 			}
 			// TODO - put handlers for "common" keys like * or # here
@@ -97,7 +97,7 @@ public class Ivr extends HttpServlet {
 			System.out.println("Failed to parse ivrstep " + e);
 		}
 		
-		System.out.println("Plivo XML (ivr) is : " + xml);
+		System.out.println("Plivo XML (answer/ivr) is : " + xml);
 		
 		response.getWriter().write(xml);
 		response.addHeader("content-type", "application/xml");

@@ -56,7 +56,7 @@ public class FileUpload extends HttpServlet {
     	// Read our web.xml stuff
     	
     	Settings.s.callbackUrl = getServletContext().getInitParameter("callback.url");
-    	Settings.s.originalCallbackUrl = Settings.s.callbackUrl; // As the callback can be edited in the UI, keep the original
+    	Settings.s.originalCallbackUrl = getServletContext().getInitParameter("callback.url"); // As the callback can be edited in the UI, keep the original
     	Settings.s.uploadDirectory = getServletContext().getInitParameter("upload.location");
     	// By default, these are all relative to our servlet webapp folder - so I need to start with a "/"
     	Settings.s.uploadDiskPath = getServletContext().getRealPath("/" + Settings.s.uploadDirectory);

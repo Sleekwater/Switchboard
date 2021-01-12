@@ -41,15 +41,13 @@ public class ClientWebsocketServlet {
 	
 	@OnOpen
 	public void open(Session session) {
-		System.out.println("Open from " + session + " sessionhandler=" + sessionHandler);
-		
-			sessionHandler.addSession(session);
-		
+		//System.out.println("Open from " + session + " sessionhandler=" + sessionHandler);		
+		sessionHandler.addSession(session);		
 	}
 
 	@OnClose
 	public void close(Session session) {
-		System.out.println("Close from " + session+ " sessionhandler=" + sessionHandler);
+		//System.out.println("Close from " + session+ " sessionhandler=" + sessionHandler);
 		sessionHandler.removeSession(session);
 	}
 

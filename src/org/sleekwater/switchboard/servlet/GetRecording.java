@@ -63,15 +63,22 @@ public class GetRecording extends HttpServlet {
 				PlivoResponse resp = new PlivoResponse();
 				IvrStep thisStep = IvrSteps.i.get(d.progress); // Should be a record step, otherwise why are we in the recording servlet?
 				IvrStep nextStep = IvrSteps.i.get(thisStep.defaultKey);
-				try {
-					nextStep.buildPlivoIvrResponse(resp, d, 0);
-					// Remember where we are, so that the next callback will go to the right place in the menu system
-					d.updateIvrProgress(nextStep);					
-					xml = resp.toXML();
-				} catch (PlivoException e) {	
-					System.out.println("Failed while parsing recording for IVR: " + deviceNumber);	
-					e.printStackTrace();
-				}				
+				if (null == nextStep)
+				{
+					System.out.println("defaultKey not mapped? - thisStep is " + thisStep);						
+				}
+				else
+				{
+					try {
+						nextStep.buildPlivoIvrResponse(resp, d, 0);
+						// Remember where we are, so that the next callback will go to the right place in the menu system
+						d.updateIvrProgress(nextStep);					
+						xml = resp.toXML();
+					} catch (Exception e) {	
+						System.out.println("Failed while parsing recording for IVR: " + deviceNumber);	
+						e.printStackTrace();
+					}
+				}
 			}
 			else
 			{
@@ -80,7 +87,6 @@ public class GetRecording extends HttpServlet {
 			System.out.println("Plivo XML (record) is : " + xml);
 			response.getWriter().write(xml);
 			response.addHeader("content-type", "application/xml");
-		}
-		super.doPost(request, response);
+		}		
 	}
 }

@@ -277,13 +277,15 @@ public class IvrStep {
 	 */
 	public IvrStep parseDigits(String digits, Device d) {
 
+		System.out.println("parseDigits: " + digits);
 		// Was a key pressed? Does it match something we're expecting?
 		if (null == digits || digits.length() == 0)
 		{
 			// Is there a default "none" mapped?
 			if (keys.containsKey("x"))
-			{
-				String target = keys.get(digits);
+			{	
+				String target = keys.get("x");
+				System.out.println("[None] key matched - go to step: " + target);
 				return IvrSteps.i.get(target);
 			}
 		}
@@ -295,6 +297,7 @@ public class IvrStep {
 			if (this.name.equalsIgnoreCase("resume"))
 			{
 				// Yep, so let's grab the name of the last step this device reached, and use that instead
+				System.out.println("resume special case matched - go to step: " + d.progress);
 				IvrStep lastStepReached = IvrSteps.i.get(d.progress);
 				if (null != lastStepReached)
 					return lastStepReached;
@@ -304,6 +307,7 @@ public class IvrStep {
 		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
 		if (!"playaudio".equalsIgnoreCase(this.steptype))
 		{
+			System.out.println("No key expected - go to default next step: " + defaultKey);			
 			return (IvrSteps.i.get(defaultKey));
 		}
 
@@ -311,8 +315,11 @@ public class IvrStep {
 		if (keys.containsKey(digits))
 		{
 			String target = keys.get(digits);
+			System.out.println("Key pressed - go to next step: " + target);	
 			return IvrSteps.i.get(target);
 		}
+		
+		System.out.println("No digit parsed from " + digits);	
 		return null;
 	}
 
@@ -323,7 +330,7 @@ public class IvrStep {
 	 */
 	public IvrStep buildPlivoIvrResponse(PlivoResponse resp, Device d, int depth) throws PlivoException {
 
-		System.out.println("Building Plivo IVR xml for step '" + this.name + "' Device: " + d );
+		System.out.println("Building Plivo IVR xml for step '" + this.name + "' Device: " + d.number );
 
 		try
 		{
@@ -377,9 +384,11 @@ public class IvrStep {
 				Record rec = new Record();
 				int recSecs = 60; // default
 				try{
-					recSecs = Integer.getInteger(recordTime);
+					recSecs = Integer.parseInt(recordTime);
 				}
-				catch (Exception e){}	// Ignore and carry on - use the default length
+				catch (Exception e){
+					System.out.println("recordTime of " + recordTime + " not an integer. "+ e);					
+				}	// Ignore and carry on - use the default length
 				rec.setMaxLength(recSecs);
 				rec.setFinishOnKey("*");
 				rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number + "?ivr=true");
@@ -391,7 +400,7 @@ public class IvrStep {
 			System.out.println("Exception while creating plivo XML " + e);
 		}
 
-		System.out.println("IVR XML is : " + resp.toXML());
+		//System.out.println("IVR XML is : " + resp.toXML());
 		return this;
 	}
 

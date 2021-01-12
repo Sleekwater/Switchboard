@@ -75,9 +75,11 @@ public class PlayAudio extends HttpServlet {
 			rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number);
 			int recSecs = 60; // default
 			try{
-				recSecs = Integer.getInteger(recordLength);
+				recSecs = Integer.parseInt(recordLength);
 			}
-			catch (Exception e){}	// Ignore and carry on - use the default
+			catch (Exception e){
+				System.out.println("recordLength of " + recordLength + " not an integer. "+ e);	
+			}	// Ignore and carry on - use the default
 			rec.setMaxLength(recSecs);
 			rec.setFinishOnKey("*");
 		}

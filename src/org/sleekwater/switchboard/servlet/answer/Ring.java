@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.sleekwater.switchboard.Devices;
+import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Switchboard;
 
 /**
@@ -63,11 +64,12 @@ public class Ring extends HttpServlet {
 			}
 			else
 			{
-				// Todo - work out what happens with a timeout...
+				// redirect to self on a timeout
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"10\">"
 						+ Switchboard.s.getMessagePleaseWait() 
-						+ "</GetDigits></Response>";				
+						+ "</GetDigits>" 
+						+ "<Redirect>"+ Settings.s.callbackUrl + "Answer/Ring</Redirect></Response>";				
 			}
 			
 		}

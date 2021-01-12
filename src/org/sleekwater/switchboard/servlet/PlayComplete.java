@@ -54,6 +54,5 @@ public class PlayComplete extends HttpServlet {
 		resp.addHeader("Content-Type", "text/xml");
 		resp.getWriter().print(emptyXML);
 		
-		super.doPost(request, resp);
 	}
 }
