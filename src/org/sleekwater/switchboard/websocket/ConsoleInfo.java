@@ -4,8 +4,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.sleekwater.switchboard.DeviceState;
-
 /**
  * Information about each control console attached to the server.
  * @author sleekwater

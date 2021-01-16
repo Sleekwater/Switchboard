@@ -13,7 +13,6 @@ import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 import com.plivo.helper.api.client.RestAPI;
 import com.plivo.helper.api.response.call.LiveCall;
 import com.plivo.helper.api.response.call.LiveCallFactory;
-import com.plivo.helper.exception.PlivoException;
 
 /**
  * Keep an in-memory list of registered devices and what we think their current state is<br/>
@@ -205,7 +204,7 @@ public final class Devices {
 
 
 	/**
-	 * TODO - do this on a timer?
+	 * Do this on a timer?
 	 */
 	public static void updateStatus()
 	{

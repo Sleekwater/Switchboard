@@ -1,19 +1,13 @@
 package org.sleekwater.switchboard.websocket;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
-import java.util.Random;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParserFactory;
 import javax.servlet.ServletException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -33,7 +27,6 @@ import org.sleekwater.switchboard.Switchboard;
 import org.sleekwater.switchboard.Text;
 import org.sleekwater.switchboard.Texts;
 
-@ApplicationScoped
 @ServerEndpoint("/client")
 public class ClientWebsocketServlet {
 
@@ -53,7 +46,6 @@ public class ClientWebsocketServlet {
 
 	@OnError
 	public void onError(Throwable error) {
-		// TODO - remove here?
 	}
 
 	@OnMessage

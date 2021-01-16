@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 
-import com.plivo.helper.exception.PlivoException;
-import com.plivo.helper.xml.elements.Play;
-import com.plivo.helper.xml.elements.PlivoResponse;
-import com.plivo.helper.xml.elements.Redirect;
 
 @WebServlet(description = "Servlet handler for Plivo outbound calls", urlPatterns = { "/PlayAudio/PlayComplete" }, loadOnStartup=1)
 public class PlayComplete extends HttpServlet {

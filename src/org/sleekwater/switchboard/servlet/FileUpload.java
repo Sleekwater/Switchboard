@@ -9,7 +9,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletConfig;
@@ -42,7 +41,6 @@ public class FileUpload extends HttpServlet {
      */
     public FileUpload() {
         super();
-        // TODO Auto-generated constructor stub
         
     }
     

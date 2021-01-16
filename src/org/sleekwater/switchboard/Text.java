@@ -76,7 +76,6 @@ public class Text {
 			out.println(this.toString());				
 			out.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

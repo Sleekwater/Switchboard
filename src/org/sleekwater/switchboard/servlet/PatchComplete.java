@@ -14,12 +14,6 @@ import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.DeviceState;
 import org.sleekwater.switchboard.Devices;
 
-import com.plivo.helper.exception.PlivoException;
-import com.plivo.helper.xml.elements.Dial;
-import com.plivo.helper.xml.elements.Number;
-import com.plivo.helper.xml.elements.Play;
-import com.plivo.helper.xml.elements.PlivoResponse;
-
 /*
  * See https://www.plivo.com/docs/xml/dial/#callbackurl-request-parameters
  * 
@@ -43,7 +37,7 @@ public class PatchComplete extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("PatchComplete/GET");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 		{
 			String keyStr = (String)key;

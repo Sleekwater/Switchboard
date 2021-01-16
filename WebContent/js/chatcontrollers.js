@@ -38,7 +38,7 @@ phonecatApp.controller('ChatCtrl', function ($scope, NotifyService, $cookies, $t
 	$scope.device=location.search.split('device=')[1]; //"447866555273";
 	console.log($scope.device)
 	$scope.login = function(){
-		// TODO, consider allowing join this way
+		// Consider allowing join this way
 		console.log("Login");
 		$cookies.put('device', $scope.device)
 		// This relies on the WS connection being ready first. We will retry if it's not ready yet

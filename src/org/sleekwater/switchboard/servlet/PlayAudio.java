@@ -31,7 +31,7 @@ public class PlayAudio extends HttpServlet {
 			throws ServletException, IOException {
 		
 		System.out.println("PlayAudio/GET");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;

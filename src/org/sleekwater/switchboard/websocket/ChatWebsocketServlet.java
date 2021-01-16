@@ -1,19 +1,11 @@
 package org.sleekwater.switchboard.websocket;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.Random;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParserFactory;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -21,15 +13,15 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.sleekwater.switchboard.Audio;
-import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
-import org.sleekwater.switchboard.Goals;
-import org.sleekwater.switchboard.Text;
-import org.sleekwater.switchboard.Texts;
 
-@ApplicationScoped
+/**
+ * This is intended so you can direct-connect to devices (via websockets) and chat directly - without needing Plivo. 
+ * Not finished - there seemed to be various resource leaks which made the server unstable
+ * @author KevinScott
+ *
+ */
 @ServerEndpoint("/chat")
 public class ChatWebsocketServlet {
 
@@ -60,7 +52,7 @@ public class ChatWebsocketServlet {
 
 	@OnError
 	public void onError(Throwable error) {
-		// TODO - remove here?
+		
 	}
 
 	@OnMessage
@@ -80,8 +72,7 @@ public class ChatWebsocketServlet {
 			if (null == d)
 			{
 				// Device not registered, so do nothing
-				System.out.println("Device " + device + " is not registered");
-				// TODO - send an auth message to prompt logon?
+				System.out.println("Device " + device + " is not registered");				
 			}
 			else
 			{

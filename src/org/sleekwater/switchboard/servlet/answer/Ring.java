@@ -27,7 +27,6 @@ public class Ring extends HttpServlet {
      */
     public Ring() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -36,7 +35,7 @@ public class Ring extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		System.out.println("Answer/Ring/POST");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;

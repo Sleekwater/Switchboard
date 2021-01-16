@@ -1,18 +1,12 @@
 package org.sleekwater.switchboard.servlet;
 
 import javax.servlet.annotation.WebServlet;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -23,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.sleekwater.switchboard.AuditEntry;
 import org.sleekwater.switchboard.Devices;
-import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 /**
  * Servlet implementation class FullAudit

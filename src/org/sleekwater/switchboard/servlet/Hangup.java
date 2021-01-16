@@ -42,7 +42,6 @@ public class Hangup extends HttpServlet {
      */
     public Hangup() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	
@@ -52,7 +51,7 @@ public class Hangup extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	
 		System.out.println("Hangup/POST");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;
@@ -85,7 +84,7 @@ public class Hangup extends HttpServlet {
 	    String hangupCause = "";
 	    try
 	    {	
-	    	Map map = request.getParameterMap();
+	    	Map<String, String[]> map = request.getParameterMap();
 			Arrays.toString((String[])map.get("HangupCause"));
 		    Arrays.toString((String[])map.get("CallStatus"));
 	    }

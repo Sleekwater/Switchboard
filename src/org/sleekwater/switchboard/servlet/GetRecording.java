@@ -14,13 +14,8 @@ import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.IvrStep;
 import org.sleekwater.switchboard.IvrSteps;
-import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Switchboard;
-
-import com.plivo.helper.exception.PlivoException;
-import com.plivo.helper.xml.elements.Play;
 import com.plivo.helper.xml.elements.PlivoResponse;
-import com.plivo.helper.xml.elements.Redirect;
 
 @WebServlet(description = "Servlet handler that Plivo calls when a recording is finished", urlPatterns = { "/GetRecording/*" }, loadOnStartup=1)
 public class GetRecording extends HttpServlet {
@@ -30,7 +25,7 @@ public class GetRecording extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		System.out.println("GetRecording/POST");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;

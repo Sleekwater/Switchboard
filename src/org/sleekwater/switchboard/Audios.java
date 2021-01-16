@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 /**
  * Keep an in-memory list of registered audio recordings<br/>

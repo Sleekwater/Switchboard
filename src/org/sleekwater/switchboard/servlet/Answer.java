@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.sleekwater.switchboard.Audio;
-import org.sleekwater.switchboard.Audios;
 import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
@@ -19,7 +17,6 @@ import org.sleekwater.switchboard.IvrStep;
 import org.sleekwater.switchboard.IvrSteps;
 import org.sleekwater.switchboard.Settings;
 import org.sleekwater.switchboard.Switchboard;
-import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.exception.PlivoException;
 import com.plivo.helper.xml.elements.PlivoResponse;
@@ -56,7 +53,7 @@ public class Answer extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		System.out.println("Answer/POST");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;
@@ -129,8 +126,7 @@ public class Answer extends HttpServlet {
 				try {
 					currentStep.buildPlivoIvrResponse(resp, d, 0);
 				}
-				catch (PlivoException e) {
-					// TODO Auto-generated catch block
+				catch (PlivoException e) {					
 					e.printStackTrace();
 				}
 				xml = resp.toXML();				

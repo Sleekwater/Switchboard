@@ -1,21 +1,16 @@
 package org.sleekwater.switchboard.websocket;
 
-import java.io.Console;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.json.JsonObject;
 import javax.websocket.Session;
 
 import org.sleekwater.switchboard.Audios;
-import org.sleekwater.switchboard.Device;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.Goals;
 import org.sleekwater.switchboard.IvrSteps;
@@ -29,7 +24,6 @@ import org.sleekwater.switchboard.Texts;
  * @author sleekwater
  *
  */
-@ApplicationScoped
 public class SocketSessionHandler {
 
 	// The list of actual connections
@@ -39,8 +33,8 @@ public class SocketSessionHandler {
     public List<String> validAccounts = new ArrayList<String>();
 
     public SocketSessionHandler(){
-    	validAccounts.add(sha256("yournameyourpassword"));   
-       
+    	validAccounts.add(sha256("yourusernameyourpassword"));   
+         
     }
     
     public static String sha256(String base) {
@@ -63,7 +57,7 @@ public class SocketSessionHandler {
     
     public void addSession(Session session) {
         sessions.add(session);
-        System.out.println("After add there are now " + sessions.size() + " sessions");
+        //System.out.println("After add there are now " + sessions.size() + " sessions");
     }
     
     /**
@@ -142,7 +136,7 @@ public class SocketSessionHandler {
 				consoles.remove(session);
 			}
     	}
-    	System.out.println("After remove there are now " + sessions.size() + " sessions");
+    	//System.out.println("After remove there are now " + sessions.size() + " sessions");
     }
     
     

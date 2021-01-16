@@ -41,7 +41,7 @@ public class Smsstatus extends HttpServlet {
 		
 		
 		String from = request.getParameter("From");
-		String CallUUID = request.getParameter("CallUUID");
+		//String CallUUID = request.getParameter("CallUUID");
 		
 		if (Devices.d.exists(from))
 		{

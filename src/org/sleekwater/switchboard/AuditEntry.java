@@ -1,11 +1,9 @@
 package org.sleekwater.switchboard;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonValue;
 
 /**
  * When a device does something then we add an audit entry

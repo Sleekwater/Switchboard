@@ -113,7 +113,6 @@ public class Backup extends HttpServlet {
 		try {
 			baos.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return baos.toByteArray();

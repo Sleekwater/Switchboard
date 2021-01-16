@@ -219,7 +219,6 @@ public class Goal {
 					Thread.sleep(delayms);
 					System.out.println("Worker thread sleep over after " + delayms);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

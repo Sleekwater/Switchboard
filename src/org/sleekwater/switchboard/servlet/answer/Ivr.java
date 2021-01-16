@@ -30,7 +30,6 @@ public class Ivr extends HttpServlet {
      */
     public Ivr() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -39,7 +38,7 @@ public class Ivr extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		System.out.println("Answer/Ivr/POST");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;
@@ -89,8 +88,6 @@ public class Ivr extends HttpServlet {
 						+ "</GetDigits></Response>";
 				
 			}
-			// TODO - put handlers for "common" keys like * or # here
-
 		}
 		catch (Exception e)
 		{

@@ -2,28 +2,14 @@ package org.sleekwater.switchboard;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
 
 /**
  * Keep an in-memory list of the various IVR steps. This is set up beforehand, and is then referenced whenever someone is in the IVR system
@@ -89,16 +75,8 @@ public class IvrSteps {
 	public void add(File file)
 	{
 		// Read the contents of the file
-		StringBuilder sb = new StringBuilder();
 
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
-
-            // read line by line
-            /*String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append("\n");
-            }*/
-            
             
             JsonReader jsonReader = Json.createReader(br);
             JsonObject object = jsonReader.readObject();

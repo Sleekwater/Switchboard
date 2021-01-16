@@ -15,10 +15,8 @@ import org.sleekwater.switchboard.DeviceState;
 import org.sleekwater.switchboard.Devices;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
-import com.plivo.helper.exception.PlivoException;
 import com.plivo.helper.xml.elements.Dial;
 import com.plivo.helper.xml.elements.Number;
-import com.plivo.helper.xml.elements.Play;
 import com.plivo.helper.xml.elements.PlivoResponse;
 
 @WebServlet(description = "Servlet handler for Plivo patch callbacks", urlPatterns = { "/Patch" }, loadOnStartup=1)
@@ -27,10 +25,9 @@ public class Patch extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO - need to work out what's passed here for a call transfer...
 		
 		System.out.println("Patch/GET");
-		Map map = request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 		for (Object key: map.keySet())
 	    {
 	            String keyStr = (String)key;
@@ -51,7 +48,6 @@ public class Patch extends HttpServlet {
 		Dial dial = new Dial();
 		//dial.getAttributes().put("dialMusic", "real");	// This doesn't seem to do anything...		
 		dial.setDialMusic("real");	// .. so trying this...
-		// TODO - consider callbackUrl so that we get notified when the transfer is complete, ends, etc...
 		try {
 			dial.append(new Number(t.number));
 			dial.setCallbackUrl(request.getRequestURL().toString()+ "/PatchComplete");

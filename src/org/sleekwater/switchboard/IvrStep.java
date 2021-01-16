@@ -10,7 +10,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.sleekwater.switchboard.Goal.GoalRunner;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.exception.PlivoException;
@@ -19,7 +18,6 @@ import com.plivo.helper.xml.elements.Play;
 import com.plivo.helper.xml.elements.PlivoResponse;
 import com.plivo.helper.xml.elements.Record;
 import com.plivo.helper.xml.elements.Redirect;
-import com.plivo.helper.xml.elements.Speak;
 
 
 public class IvrStep {
@@ -243,7 +241,6 @@ public class IvrStep {
 			out.println(this.toString());				
 			out.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -355,7 +352,7 @@ public class IvrStep {
 					digits.setAction(Settings.s.callbackUrl + "Answer/" + endpoint);
 					// Only needed if we have multiple digits (it's the delay between them), but better same than sorry
 					digits.setDigitTimeout(30);
-					// This is how long we need to wait - TODO!
+					// This is how long we want to wait after the embedded audio finishes if no keys are pressed. Default of 5s is fine.
 					//digits.setTimeout(a.lengthInSeconds);
 					digits.setNumDigits(1);
 					digits.setMethod("POST");

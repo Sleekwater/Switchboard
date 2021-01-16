@@ -1,17 +1,13 @@
 package org.sleekwater.switchboard;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.websocket.Session;
 
@@ -161,7 +157,7 @@ public class Device {
 
 			// answer_url is the URL invoked by Plivo when the outbound call is answered
 			// and contains instructions telling Plivo what to do with the call
-			// TODO - consider putting the audio name on the callback URL here so that PlayAudio can pull it out, instead of attaching to the device in currentAudio
+			// Consider putting the audio name on the callback URL here so that PlayAudio can pull it out, instead of attaching to the device in currentAudio
 			parameters.put("answer_url",Settings.s.callbackUrl + "PlayAudio");
 			parameters.put("answer_method","GET"); // method to invoke the answer_url
 			parameters.put("hangup_url",Settings.s.callbackUrl + "Hangup"); // Notified when the called device hangs up - default POST

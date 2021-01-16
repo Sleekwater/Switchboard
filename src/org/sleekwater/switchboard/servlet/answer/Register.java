@@ -26,7 +26,6 @@ public class Register extends HttpServlet {
      */
     public Register() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -36,7 +35,6 @@ public class Register extends HttpServlet {
 		System.out.println("Answer/Register/POST");
 		String from = request.getParameter("From");
 		String xml = "<Response>" +  Switchboard.s.getMessageGenericError() + "</Response>";
-		String url = request.getRequestURL().toString() + "/Unregister";
 		String digits = "";
 		try
 		{
