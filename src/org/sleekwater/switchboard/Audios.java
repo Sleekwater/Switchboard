@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
+
 /**
  * Keep an in-memory list of registered audio recordings<br/>
  * NOTE that this is reentrant, hence synchronized for all access to the internal list
@@ -107,10 +108,20 @@ public final class Audios {
 			if (audios.containsKey(name))
 			{
 				Audio a = audios.get(name);
-				// TODO - cope with deleting folders with contents...
 				File f = new File(a.path);
 				if (null != f)
-					f.delete();		
+				{
+					// Cope with deleting folders with contents...
+					if (f.isDirectory())
+					{
+						for (File file : f.listFiles())
+						{
+							remove(file.getName());
+						}
+					}
+					// Directory should now be empty
+					f.delete();	
+				}
 				a.state = AudioState.REMOVED;
 				a.broadcastChange("remove");
 				audios.remove(name);
