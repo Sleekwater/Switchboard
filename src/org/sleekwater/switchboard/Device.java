@@ -108,12 +108,16 @@ public class Device {
 	 */
 	public void updateIvrProgress(IvrStep newStep)
 	{
-		if (!this.progress.equals(newStep.name))
+		if (!"resume".equalsIgnoreCase(newStep.name))
 		{
-			this.progress = newStep.name;
-			this.history.add(newStep.name);
-			addAudit("Ivr step reached: " + newStep.name);
-			broadcastChange("audit");
+			// Never move to the "resume" step, as that would overwrite what the resume functionality needs in order to work!			
+			if (!this.progress.equals(newStep.name))
+			{
+				this.progress = newStep.name;
+				this.history.add(newStep.name);
+				addAudit("Ivr step reached: " + newStep.name);
+				broadcastChange("audit");
+			}
 		}
 	}
 

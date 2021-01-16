@@ -802,9 +802,9 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 				if (ivrstep.name =="resume"){
 					
 					if (ivrstep.specialkey=="x")
-						src += " [None] resumes from step reached";
+						src += " [None] resumes from last step reached";
 					else
-					src += " [" + ivrstep.specialkey + "] resumes from step reached";
+					src += " [" + ivrstep.specialkey + "] resumes from last step reached";
 				}
 			}
 		}

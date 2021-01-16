@@ -101,27 +101,28 @@ public class Answer extends HttpServlet {
 			// Are we running an IVR menu?
 			if (Switchboard.s.isIVR)
 			{
-				// We are, so find the current state of this device in the IVR menu and play the audio for it
+				// We are. Since this is the start of a new call, we can do one of two things 
+				// - start an IVR sequence (at the start step) or resume from where we left off
 				System.out.println("Known number - (re)start the IVR menu");
 				// Tell the console that this device is in the IVR menu
 				Devices.d.ivr(from, CallUUID);
 				// Get the current step in the IVR from the device
 				Device d = Devices.d.get(from);
 				IvrStep currentStep = IvrSteps.i.getStep(d);
-				// Have we finished (and are restarting?)
+				// OK, work out which of the two steps relates to our case
 				if (null == currentStep || currentStep.endsCall() || "start".equalsIgnoreCase(currentStep.name))
 				{
-					// Start step always exists...
+					// We've either finished (and are restarting) or have never started the IVR menu. So, start at the beginning
 					currentStep = IvrSteps.i.getStep("start");
+					if (null != d)
+						d.updateIvrProgress(currentStep);					
 				}
 				else
 				{
-					// Resume step always exists...
+					// We're half-way through an IVR menu, so play the resume option which allows the user to decide to restart or resume
 					currentStep = IvrSteps.i.getStep("resume");		
-				}
-				if (null != d)
-				{
-					d.updateIvrProgress(currentStep);					
+					if (null != d)
+						d.addAudit("Resuming interrupted call...");
 				}
 				// And point plivo to what I want to play
 				PlivoResponse resp = new PlivoResponse();

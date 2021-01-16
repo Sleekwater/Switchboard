@@ -349,8 +349,10 @@ public class IvrStep {
 				}
 				else
 				{
+					// Special case for the resume option, as we don't want to trample our current step
+					String endpoint = "resume".equalsIgnoreCase(this.name) ? "Resume" : "Ivr";
 					GetDigits digits = new GetDigits();
-					digits.setAction(Settings.s.callbackUrl + "Answer/Ivr");
+					digits.setAction(Settings.s.callbackUrl + "Answer/" + endpoint);
 					// Only needed if we have multiple digits (it's the delay between them), but better same than sorry
 					digits.setDigitTimeout(30);
 					// This is how long we need to wait - TODO!
@@ -360,7 +362,7 @@ public class IvrStep {
 					digits.append(new Play(a.getUrl()));
 					resp.append(digits);
 					// And add in a default as well, so it will fire if no keys are pressed
-					resp.append(new Redirect(Settings.s.callbackUrl + "Answer/Ivr"));
+					resp.append(new Redirect(Settings.s.callbackUrl + "Answer/" + endpoint));
 				}
 			}
 			else if ("sendtext".equalsIgnoreCase(this.steptype))
