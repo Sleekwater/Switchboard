@@ -668,6 +668,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		newIvrstep.audio="";
 		newIvrstep.state="IDLE";
 		newIvrstep.keys = [];
+		newIvrstep.stopsteps = [];
 		newIvrstep.specialkey="";
 		$scope.ivrsteps.push(newIvrstep)
 		$scope.activeIvrstep = newIvrstep;
@@ -693,9 +694,17 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	{
 		ivrstep.keys.push({'key':'','target':''});
 	}
+	$scope.addIvrstepStopstep = function(ivrstep)
+	{
+		ivrstep.stopsteps.push({'target':''});
+	}
 	$scope.deleteIvrstepKey= function(ivrstep, index)
 	{
 		ivrstep.keys.splice(index, 1)
+	}
+	$scope.deleteIvrStopstep= function(ivrstep, index)
+	{
+		ivrstep.stopsteps.splice(index, 1)
 	}
 	$scope.describeIvrstep = function(ivrstep)
 	{
@@ -757,12 +766,26 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 			{
 				src += " records for up to " + ivrstep.recordtime + " seconds";
 			}
+			else if (ivrstep.steptype=="timer")
+			{
+				src += " starts a " + ivrstep.recordtime + " second timer ";
+			}
 		}
 		catch (err){}
 
 		// List keys
 		try{
-			if ((ivrstep.keys.length == 0 || ivrstep.steptype!="playaudio") && ivrstep.name != "resume")
+			if (ivrstep.steptype=="timer")
+			{
+				src += " then goes to step '" + ivrstep.defaultkey + "', time runs out -> '" + ivrstep.specialkey + "', stopping if step reached-> "
+				for(var i = 0; i < ivrstep.stopsteps.length; i++){
+					var stopstep = ivrstep.stopsteps[i];
+					if (i>0)
+						src += ", ";					
+					src += stopstep.target					
+				}
+			}
+			else if ((ivrstep.keys.length == 0 || ivrstep.steptype!="playaudio") && ivrstep.name != "resume")
 			{
 				if (ivrstep.defaultkey.length==0)
 				{

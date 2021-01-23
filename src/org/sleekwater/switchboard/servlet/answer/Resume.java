@@ -63,6 +63,7 @@ public class Resume extends HttpServlet {
 			IvrStep nextStep = null;
 			if (null != currentStep)
 			{
+				d.processTimers(currentStep);	// In case we're restarting into a timer step
 				nextStep = currentStep.parseDigits(digits, d);
 				System.out.println("nextStep is " + nextStep);
 			}

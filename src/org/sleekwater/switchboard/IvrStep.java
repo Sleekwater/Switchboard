@@ -2,6 +2,7 @@ package org.sleekwater.switchboard;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.json.Json;
@@ -24,7 +25,10 @@ public class IvrStep {
 
 	public String name;
 	JsonObject audio = Json.createObjectBuilder().build();	// By default, an empty object
+	// Have any keys been mapped for this IVR step?
 	HashMap<String, String> keys = new HashMap<String, String>();
+	// A timer stops if the IVR menu reaches any of these steps
+	ArrayList<String> stopsteps = new ArrayList<String>();
 	public IvrState state = IvrState.IDLE;	
 	public String steptype = "playaudio";// sendtext, record
 	public String defaultKey = "";	// If no key pressed (or it can't be pressed)
@@ -61,6 +65,16 @@ public class IvrStep {
 				keys.put(key, target);
 			}
 		}
+		if (o.containsKey("stopsteps"))
+		{
+			JsonArray arr = o.getJsonArray("stopsteps");
+			for (int i=0; i< arr.size(); i++)
+			{
+				JsonObject entry = arr.getJsonObject(i);
+				stopsteps.add(entry.getString("target"));
+			}
+		}
+		
 		if (o.containsKey("steptype")) {
 			this.steptype = o.getString("steptype");
 		}
@@ -96,6 +110,14 @@ public class IvrStep {
 				}
 			}
 		}
+		else
+		{
+			if (null==defaultKey)
+			{
+				System.out.println("Step " + this.name + " ends the call because there is no next step defined!");
+				return true;				
+			}
+		}
 		// There's at least one key or a default set up - so carry on
 		return false;
 	}
@@ -118,12 +140,19 @@ public class IvrStep {
 					.add("key", key)
 					.add("target", keys.get(key)));
 		}
+		
+		JsonArrayBuilder stopStepBuilder = Json.createArrayBuilder();
+		for (String target : stopsteps) {
+			stopStepBuilder.add(Json.createObjectBuilder()
+					.add("target", target));	
+		}
 
 		JsonObjectBuilder ivrstep = Json.createObjectBuilder()
 				.add("name", getName())
 				.add("audio", audio)
 				.add("text", text)
 				.add("keys", keyBuilder)
+				.add("stopsteps", stopStepBuilder)
 				.add("defaultkey", defaultKey)
 				.add("specialkey", specialKey)
 				.add("recordtime", recordTime)				
@@ -208,6 +237,36 @@ public class IvrStep {
 				result += " step '" + defaultKey + "' does not exist";
 			}
 		}
+		else if ("timer".equalsIgnoreCase(steptype))
+		{
+			try{
+				Integer rec = Integer.parseInt(recordTime);
+				if (rec <=0 || rec > 60*30)	// 30 mins enough?
+				{
+					throw new Exception ("out of range");
+				}
+			}
+			catch (Exception e)
+			{
+				result += " timer must be between 1 and 1800 seconds";
+			}
+			if (defaultKey.length() > 0 && null == IvrSteps.i.get(defaultKey))
+			{
+				result += " step '" + defaultKey + "' does not exist";
+			}
+			if (specialKey.length() > 0 && null == IvrSteps.i.get(specialKey))
+			{
+				result += " step '" + specialKey + "' does not exist";
+			}
+			for (String target : stopsteps)
+			{
+				if (null == IvrSteps.i.get(target))
+				{
+					result += " step '" + target + "' does not exist ";
+				}
+			}
+			
+		}
 		else
 		{
 			result += " not a known type of step: " + steptype;
@@ -275,6 +334,21 @@ public class IvrStep {
 	public IvrStep parseDigits(String digits, Device d) {
 
 		System.out.println("parseDigits: " + digits);
+
+		// Is there a timer, and has it expired? That takes priority
+		IvrStep timeoutStep = d.findExpiredTimer();
+		if (null != timeoutStep)
+		{
+			return timeoutStep;
+		}
+		
+		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
+		if (!"playaudio".equalsIgnoreCase(this.steptype))
+		{
+			System.out.println("No key expected - go to default next step: " + defaultKey);			
+			return (IvrSteps.i.get(defaultKey));
+		}
+		
 		// Was a key pressed? Does it match something we're expecting?
 		if (null == digits || digits.length() == 0)
 		{
@@ -301,13 +375,6 @@ public class IvrStep {
 			}
 		}
 		
-		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
-		if (!"playaudio".equalsIgnoreCase(this.steptype))
-		{
-			System.out.println("No key expected - go to default next step: " + defaultKey);			
-			return (IvrSteps.i.get(defaultKey));
-		}
-
 		// Look at the key pressed to work out what the next step is
 		if (keys.containsKey(digits))
 		{

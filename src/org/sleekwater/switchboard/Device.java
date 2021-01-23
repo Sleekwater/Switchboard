@@ -3,6 +3,7 @@ package org.sleekwater.switchboard;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -51,7 +52,9 @@ public class Device {
 	public List<Audio> playedAudios = new ArrayList<Audio>();
 	public Text cueText = null;
 	// Is this device directly connected to a chat window via a websocket session?
-	public Session session = null;	
+	public Session session = null;
+	// Is there a timer running for this device? All running timers live here
+	private HashMap<IvrStep, Long> timers = new HashMap<IvrStep, Long>();	
 	
 	@Override
 	public String toString()
@@ -401,5 +404,80 @@ public class Device {
 		cueAudio = null;
 	}
 
+	/**
+	 * Is there a timer running for this device? If so, has it expired?
+	 * @return
+	 */
+	public IvrStep findExpiredTimer() {
+		
+		for (IvrStep timerStep : timers.keySet())
+		{
+			long startTime = timers.get(timerStep);
+			try
+			{
+				if ((startTime + Long.parseLong(timerStep.recordTime) * 1000) < System.currentTimeMillis())
+				{
+					// Timer has expired. Remove it and return the step we should jump to
+					addAudit("Timer '" + timerStep.getName() + "' has expired after " + timerStep.recordTime+ " seconds. Jumping to " + timerStep.specialKey);
+					timers.remove(timerStep);
+					return IvrSteps.i.getStep(timerStep.specialKey);
+				}
+			}
+			catch (Exception e)
+			{
+				// Don't let badly configured timers break things
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Do any timer-related work for this step
+	 * @param currentStep
+	 */
+	public void processTimers(IvrStep currentStep)
+	{
+		startAnyTimers(currentStep);
+		stopAnyTimers(currentStep);
+	}
 	
+	/**
+	 * Have we reached a timer step? If so, mark the current time that this device got here
+	 * @param currentStep
+	 */
+	private void startAnyTimers(IvrStep currentStep) {
+		if (null == currentStep)
+			return;
+		if ("timer".equalsIgnoreCase(currentStep.getName()))
+		{
+			// Mark this timer as running on this device as of now
+			addAudit("Timer '" + currentStep.getName() + "' started...");
+			this.timers .put(currentStep, System.currentTimeMillis());
+		}
+	}
+
+	/**
+	 * Does this step stop a timer from running? 
+	 * @param currentStep
+	 */
+	private void stopAnyTimers(IvrStep currentStep) {
+		if (null == currentStep)
+			return;
+		for (IvrStep timerStep : timers.keySet())
+		{
+			try
+			{
+				if (timerStep.stopsteps.contains(currentStep.getName()))
+				{
+					// Timer has stopped. Remove it 
+					addAudit("Timer '" + timerStep.getName() + "' stopped after IVR menu reached step " + currentStep.getName());
+					timers.remove(timerStep);
+				}
+			}
+			catch (Exception e)
+			{
+				// Don't let badly configured timers break things
+			}
+		}
+	}
 }

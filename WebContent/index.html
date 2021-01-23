@@ -395,7 +395,8 @@
 								<h4>This step...</h4>
 								<label><input type="radio" ng-model="activeIvrstep.steptype" value="playaudio"> Plays audio</label>
 								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="sendtext">Sends a Text</label>	
-								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="record"> Records</label>															
+								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="record"> Records</label>
+								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="timer"> Starts a timer</label>																
 							</div>
 							
 							<!--  Audio only subpanel -->
@@ -481,6 +482,28 @@
 								<div class="four columns">								
 									<h4>...then goes to step</h4>
 									<input ng-model="activeIvrstep.defaultkey">								
+								</div>
+							</div>
+							
+							<!--  timer subpanel -->
+							<div ng-show="activeIvrstep.steptype=='timer'">							
+								<div class="four columns">
+									<h4>...counting down...</h4>
+									<input ng-model="activeIvrstep.recordtime" style="width:90%;margin:10px;" placeholder="Seconds"> seconds
+								</div>
+								<div class="four columns">								
+									<h4>...then goes to step...</h4>
+									<input ng-model="activeIvrstep.defaultkey">
+									<h4>...jumping to this step when time runs out...</h4>
+									<input ng-model="activeIvrstep.specialkey">
+									<h4>...stopping the timer if these steps are reached</h4>
+									<button ng-click="addIvrstepStopstep(activeIvrstep)" class="go" >Add</button>
+									<ul style="overflow-y: scroll; height:300px">
+										<li style="overflow: hidden;" ng-repeat="stopstep in activeIvrstep.stopsteps track by $index ">
+											<input ng-model="stopstep.target" style="font-size:1em;">
+											<button ng-click="deleteIvrStopstep(activeIvrstep, $index)" class="go" >Delete</button>
+										</li>
+									</ul>
 								</div>
 							</div>
 						</div>	
