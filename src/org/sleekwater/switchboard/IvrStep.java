@@ -327,21 +327,37 @@ public class IvrStep {
 	}
 
 	/**
+	 * Work out what step we're going to do next
+	 * @param digits
+	 * @param d
+	 * @return
+	 */
+	public IvrStep getNextStep(String digits, Device d)
+	{
+		IvrStep nextStep = parseDigits(digits, d);
+		
+		// Is the next step a timer step? Then start any timers, and jump over the timer step - we never use it as a state
+		nextStep = d.processTimers(nextStep);
+		
+		return nextStep;		
+	}
+	
+	/**
 	 * Find out if the digits pressed match any of our mapped keys, and if so return the next step in the ivr menu
 	 * @param digits
 	 * @return
 	 */
-	public IvrStep parseDigits(String digits, Device d) {
+	private IvrStep parseDigits(String digits, Device d) {
 
 		System.out.println("parseDigits: " + digits);
 
-		// Is there a timer, and has it expired? That takes priority
+		// Is there a timer running, and has it expired? That takes priority
 		IvrStep timeoutStep = d.findExpiredTimer();
 		if (null != timeoutStep)
 		{
 			return timeoutStep;
 		}
-		
+				
 		// Are we a step that has a default key (i.e. we're not expecting the user to press a key)
 		if (!"playaudio".equalsIgnoreCase(this.steptype))
 		{
@@ -381,6 +397,18 @@ public class IvrStep {
 			String target = keys.get(digits);
 			System.out.println("Key pressed - go to next step: " + target);	
 			return IvrSteps.i.get(target);
+		}
+		
+		// Is the step set up with just a default next step? (i.e. we're not expecting a digit to be pressed)
+		if (null != keys && keys.size() == 1)
+		{
+			// Is the only key mapped the default?
+			if (keys.containsKey("x"))
+			{	
+				String target = keys.get("x");
+				System.out.println("[None] key matched - go to step: " + target);
+				return IvrSteps.i.get(target);
+			}			
 		}
 		
 		System.out.println("No digit parsed from " + digits);	
@@ -460,6 +488,12 @@ public class IvrStep {
 				rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number + "?ivr=true");
 				resp.append(rec);
 			}
+			else if ("timer".equalsIgnoreCase(this.steptype))
+			{
+				// We should never ask for plivo XML of a timer step, as we jump over that step
+				System.out.println("ERROR. Don't return XML for timer steps!");
+			}
+			
 		}
 		catch (Exception e)
 		{

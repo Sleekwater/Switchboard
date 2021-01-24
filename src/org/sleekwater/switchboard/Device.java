@@ -418,6 +418,7 @@ public class Device {
 				if ((startTime + Long.parseLong(timerStep.recordTime) * 1000) < System.currentTimeMillis())
 				{
 					// Timer has expired. Remove it and return the step we should jump to
+					System.out.println("Timer expired " + timerStep.getName());					
 					addAudit("Timer '" + timerStep.getName() + "' has expired after " + timerStep.recordTime+ " seconds. Jumping to " + timerStep.specialKey);
 					timers.remove(timerStep);
 					return IvrSteps.i.getStep(timerStep.specialKey);
@@ -435,25 +436,33 @@ public class Device {
 	 * Do any timer-related work for this step
 	 * @param currentStep
 	 */
-	public void processTimers(IvrStep currentStep)
+	public IvrStep processTimers(IvrStep currentStep)
 	{
-		startAnyTimers(currentStep);
+		if (null == currentStep)
+			return currentStep;
+		
 		stopAnyTimers(currentStep);
+		if ("timer".equalsIgnoreCase(currentStep.steptype))
+		{
+			startTimer(currentStep);	
+			// And bounce to the next step
+			return IvrSteps.i.get(currentStep.defaultKey);
+		}
+		// Otherwise carry on with the current step
+		return currentStep;
 	}
 	
 	/**
 	 * Have we reached a timer step? If so, mark the current time that this device got here
 	 * @param currentStep
 	 */
-	private void startAnyTimers(IvrStep currentStep) {
+	private void startTimer(IvrStep currentStep) {
 		if (null == currentStep)
 			return;
-		if ("timer".equalsIgnoreCase(currentStep.getName()))
-		{
-			// Mark this timer as running on this device as of now
-			addAudit("Timer '" + currentStep.getName() + "' started...");
-			this.timers .put(currentStep, System.currentTimeMillis());
-		}
+		// Mark this timer as running on this device as of now
+		System.out.println("Starting timer " + currentStep.getName());			
+		addAudit("Timer '" + currentStep.getName() + "' started...");
+		this.timers .put(currentStep, System.currentTimeMillis());
 	}
 
 	/**
@@ -470,6 +479,7 @@ public class Device {
 				if (timerStep.stopsteps.contains(currentStep.getName()))
 				{
 					// Timer has stopped. Remove it 
+					System.out.println("Stopping timer " + timerStep.getName());
 					addAudit("Timer '" + timerStep.getName() + "' stopped after IVR menu reached step " + currentStep.getName());
 					timers.remove(timerStep);
 				}

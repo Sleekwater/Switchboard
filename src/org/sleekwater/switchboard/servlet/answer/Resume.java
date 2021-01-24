@@ -63,8 +63,7 @@ public class Resume extends HttpServlet {
 			IvrStep nextStep = null;
 			if (null != currentStep)
 			{
-				d.processTimers(currentStep);	// In case we're restarting into a timer step
-				nextStep = currentStep.parseDigits(digits, d);
+				nextStep = currentStep.getNextStep(digits, d);
 				System.out.println("nextStep is " + nextStep);
 			}
 			
@@ -84,7 +83,7 @@ public class Resume extends HttpServlet {
 			{
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
-						+ Switchboard.s.getMessageInvalidKey()
+						+ Switchboard.s.getMessageInvalidKey() 
 						+ "</GetDigits></Response>";
 				
 			}
