@@ -35,6 +35,12 @@ public class IvrStep {
 	public String specialKey = "";	// Some steps have a "special" option - e.g. resume - and this is the key that maps to the special option
 	JsonObject text =  Json.createObjectBuilder().build();	// By default, an empty object
 	public String recordTime = "";	// if steptype=record then how long should it record for?
+	
+	/**
+	 *  How long do we wait after playing the audio (for a keypress)?
+	 */
+	public Integer paddingInSeconds = 5;	
+	
 
 	// Parse the JSON into our object for ease of use; this is the reverse of toJson, except we've already stripped off the outer ivrstep level
 	public IvrStep(JsonObject o)
@@ -87,6 +93,18 @@ public class IvrStep {
 
 		if (o.containsKey("specialkey"))
 			this.specialKey = o.getString("specialkey");
+		
+        if (o.containsKey("padding"))
+        {
+       	 try
+       	 {
+       		 this.paddingInSeconds = Integer.parseInt(o.getString("padding"));
+       	 }
+       	 catch (Exception e)
+       	 {
+       		 this.paddingInSeconds = 5;
+       	 }
+        }
 	}
 
 	/**
@@ -157,7 +175,8 @@ public class IvrStep {
 				.add("specialkey", specialKey)
 				.add("recordtime", recordTime)				
 				.add("steptype", steptype)
-				.add("state", state.toString());
+				.add("state", state.toString())
+				.add("padding", paddingInSeconds);
 
 		String errorMsg = validate();
 		if (errorMsg.length() > 0)
@@ -447,8 +466,8 @@ public class IvrStep {
 					digits.setAction(Settings.s.callbackUrl + "Answer/" + endpoint);
 					// Only needed if we have multiple digits (it's the delay between them), but better same than sorry
 					digits.setDigitTimeout(30);
-					// This is how long we want to wait after the embedded audio finishes if no keys are pressed. Default of 5s is fine.
-					//digits.setTimeout(a.lengthInSeconds);
+					// This is how long we want to wait after the embedded audio finishes if no keys are pressed. Default of 5s.
+					digits.setTimeout(this.paddingInSeconds);
 					digits.setNumDigits(1);
 					digits.setMethod("POST");
 					digits.append(new Play(a.getUrl()));

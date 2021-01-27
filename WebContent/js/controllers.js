@@ -670,6 +670,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		newIvrstep.keys = [];
 		newIvrstep.stopsteps = [];
 		newIvrstep.specialkey="";
+		newIvrstep.padding=5;
 		$scope.ivrsteps.push(newIvrstep)
 		$scope.activeIvrstep = newIvrstep;
 	}
