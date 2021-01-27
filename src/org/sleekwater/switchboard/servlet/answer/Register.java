@@ -58,7 +58,7 @@ public class Register extends HttpServlet {
 				{
 					// drop straight into the Ivr system after registration, as it's too fiddly to have to ring up twice.
 					plivoXML = Switchboard.s.getMessageRegistrationIvr() 
-							+ "<Redirect>"+ Settings.s.callbackUrl + "Answer/Ivr</Redirect>";
+							+ "<Redirect>"+ Settings.s.callbackUrl + "Answer</Redirect>";
 				}
 				
 				// Tell plivo what to do
