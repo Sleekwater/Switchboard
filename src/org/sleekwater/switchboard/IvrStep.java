@@ -34,7 +34,10 @@ public class IvrStep {
 	public String defaultKey = "";	// If no key pressed (or it can't be pressed)
 	public String specialKey = "";	// Some steps have a "special" option - e.g. resume - and this is the key that maps to the special option
 	JsonObject text =  Json.createObjectBuilder().build();	// By default, an empty object
-	public String recordTime = "";	// if steptype=record then how long should it record for?
+	/**
+	 * How long are we recording for, or how long is a timer step running for? In seconds
+	 */
+	public String recordTime = "";	
 	
 	/**
 	 *  How long do we wait after playing the audio (for a keypress)?

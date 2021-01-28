@@ -12,6 +12,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.websocket.Session;
 
+import org.sleekwater.switchboard.Goal.GoalRunner;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.api.client.RestAPI;
@@ -55,6 +56,8 @@ public class Device {
 	public Session session = null;
 	// Is there a timer running for this device? All running timers live here
 	private HashMap<IvrStep, Long> timers = new HashMap<IvrStep, Long>();	
+	// Is there an interrupt pending for this device? We have just the one at a time
+	private CallInterruptTimer interrupt = null;
 	
 	@Override
 	public String toString()
@@ -441,6 +444,12 @@ public class Device {
 		if (null == currentStep)
 			return currentStep;
 		
+		if ("start".equalsIgnoreCase(currentStep.name))
+		{
+			// Starting again, so make sure any timers are cleared.
+			clearAllTimers();
+		}
+		
 		stopAnyTimers(currentStep);
 		if ("timer".equalsIgnoreCase(currentStep.steptype))
 		{
@@ -461,8 +470,18 @@ public class Device {
 			return;
 		// Mark this timer as running on this device as of now
 		System.out.println("Starting timer " + currentStep.getName());			
-		addAudit("Timer '" + currentStep.getName() + "' started...");
-		this.timers .put(currentStep, System.currentTimeMillis());
+		addAudit("Timer '" + currentStep.getName() + "' started (" + currentStep.recordTime + " seconds)");
+		this.timers.put(currentStep, System.currentTimeMillis());
+		
+		// Also start a worker thread, so that we can interrupt the current call (if it's still going on) and jump immediately to the end step
+		if (null != interrupt)
+		{
+			// Overlapping interrupts? Make sure the old one is cancelled
+			interrupt.cancelInterrupt = true;
+		}
+		// Start off a new thread which will interrupt the current call once the timer has expired
+		interrupt = new CallInterruptTimer(this, currentStep.recordTime);
+		new Thread(interrupt).start();
 	}
 
 	/**
@@ -482,6 +501,11 @@ public class Device {
 					System.out.println("Stopping timer " + timerStep.getName());
 					addAudit("Timer '" + timerStep.getName() + "' stopped after IVR menu reached step " + currentStep.getName());
 					timers.remove(timerStep);
+					if (null != interrupt)
+					{
+						interrupt.cancelInterrupt = true;
+						interrupt = null;
+					}
 				}
 			}
 			catch (Exception e)
@@ -489,5 +513,19 @@ public class Device {
 				// Don't let badly configured timers break things
 			}
 		}
+	}
+	
+	/**
+	 * Clear all timers that might be running for this device
+	 * @param currentStep
+	 */
+	private void clearAllTimers() {
+		timers.clear();
+		if (null != interrupt)
+		{
+			interrupt.cancelInterrupt = true;
+			interrupt = null;
+		}
+
 	}
 }
