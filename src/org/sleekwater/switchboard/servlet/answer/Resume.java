@@ -84,6 +84,7 @@ public class Resume extends HttpServlet {
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
 						+ Switchboard.s.getMessageInvalidKey() 
+						+ (d.currentAudio == null ? "" : "<Play>" + d.currentAudio.getUrl() + "</Play>")
 						+ "</GetDigits></Response>";
 				
 			}

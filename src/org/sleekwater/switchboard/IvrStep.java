@@ -457,6 +457,7 @@ public class IvrStep {
 			if ("playaudio".equalsIgnoreCase(this.steptype))
 			{
 				Audio a = this.pickAudio(d);
+				d.currentAudio = a;
 				if (this.endsCall())
 				{
 					resp.append(new Play(a.getUrl()));

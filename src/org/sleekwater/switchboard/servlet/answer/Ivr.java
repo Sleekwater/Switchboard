@@ -82,9 +82,13 @@ public class Ivr extends HttpServlet {
 			}
 			else
 			{
+				PlivoResponse resp = new PlivoResponse();
+				currentStep.buildPlivoIvrResponse(resp, d, 0);
+				// Replay the last message, which should always be the resume step message here...
 				xml = "<Response>"
 						+ "<GetDigits action=\"" + url + "\" method=\"POST\" numDigits=\"1\" retries=\"1\" timeout=\"30\">"
 						+ Switchboard.s.getMessageInvalidKey()
+						+ (d.currentAudio == null ? "" : "<Play>" + d.currentAudio.getUrl() + "</Play>")
 						+ "</GetDigits></Response>";
 				
 			}
