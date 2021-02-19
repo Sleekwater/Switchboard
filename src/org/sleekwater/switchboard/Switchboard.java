@@ -25,6 +25,8 @@ public final class Switchboard implements Runnable {
 	public boolean isAutoregister = false;
 	public boolean isHeartbeat = false;
 	public String heartbeatNumber = "";
+	public boolean skipRegistration = false;
+
 
 	// Defaults for the server messages
 	private String messageWelcome = "Welcome to the switchboard. Press 1 to register for the performance.";
@@ -62,6 +64,8 @@ public final class Switchboard implements Runnable {
 			isHeartbeat = o.getBoolean("isheartbeat");
 		if (o.containsKey("heartbeatnumber"))
 			heartbeatNumber = o.getString("heartbeatnumber");
+		if (o.containsKey("skipregistration"))
+			skipRegistration = o.getBoolean("skipregistration");
 
 		if (o.containsKey("messageCannotRegister"))
 			messageCannotRegister = o.getString("messageCannotRegister");
@@ -109,6 +113,7 @@ public final class Switchboard implements Runnable {
 				.add("autoregister", isAutoregister)
 				.add("isheartbeat", isHeartbeat)
 				.add("heartbeatnumber", heartbeatNumber)
+				.add("skipregistration", skipRegistration)
 				.add("messageCannotRegister", messageCannotRegister)
 				.add("messageGenericError", messageGenericError)
 				.add("messageInvalidKey", messageInvalidKey)
@@ -173,6 +178,7 @@ public final class Switchboard implements Runnable {
 	 * Where do heartbeat messages go to?
 	 */
 	private Device recipient = null;
+
 	
 	/**
 	 * Look at if we should have a heartbeat process running or not, and update the heartbeat thread accordingly

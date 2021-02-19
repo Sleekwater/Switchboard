@@ -67,6 +67,17 @@ public class Answer extends HttpServlet {
 		String xml = "<Response>" + Switchboard.s.getMessageGenericError() + "</Response>";
 		String url = request.getRequestURL().toString();
 		
+		// Are we skipping the manual registration message step?
+		if (Switchboard.s.isIVR && Switchboard.s.skipRegistration && Switchboard.s.isAutoregister)
+		{
+			if (!Devices.d.exists(from))
+			{
+				System.out.println("Registering silently");			
+				// Add it in
+				Devices.d.add(from, "phone");
+			}
+		}
+		
 		// Are we registering?
 		if (!Devices.d.exists(from))
 		{
