@@ -245,14 +245,14 @@ public class IvrStep {
 		{
 			try{
 				Integer rec = Integer.parseInt(recordTime);
-				if (rec <=0 || rec > 120)
+				if (rec <=0 || rec > 1200)
 				{
 					throw new Exception ("out of range");
 				}
 			}
 			catch (Exception e)
 			{
-				result += " record time must be between 1 and 120 seconds";
+				result += " record time must be between 1 and 1200 seconds";
 			}
 			if (defaultKey.length() > 0 && null == IvrSteps.i.get(defaultKey))
 			{
