@@ -69,8 +69,7 @@ public class Ivr extends HttpServlet {
 			
 			if (null != nextStep)
 			{
-				// Ask plivo what to play next
-				// First attach a record object to the response...			
+				// Ask what to play next
 				PlivoResponse resp = new PlivoResponse();
 				nextStep = nextStep.buildPlivoIvrResponse(resp, d, 0);
 				xml = resp.toXML();
@@ -91,6 +90,17 @@ public class Ivr extends HttpServlet {
 						+ (d.currentAudio == null ? "" : "<Play>" + d.currentAudio.getUrl() + "</Play>")
 						+ "</GetDigits></Response>";
 				
+				// Make sure we don't loop forever
+				if (null != d)
+				{
+					d.loopCount--;
+					if (d.loopCount <=0)
+					{
+						xml = "<Response>"							
+								+ Switchboard.s.getMessageGoodbye()
+								+ "</Response>";
+					}
+				}
 			}
 		}
 		catch (Exception e)

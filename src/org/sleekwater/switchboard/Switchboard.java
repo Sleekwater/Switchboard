@@ -39,7 +39,10 @@ public final class Switchboard implements Runnable {
 	private String messageRegistrationIvr = "Welcome, and thank you for registering. The performance will start in just a few moments, please wait.";
 	private String messageUnregistrationSuccessful = "Thank you. You are now unregistered, and will not take any further part in the performance.";
 	private String messagePleaseWait = "Your call is in a queue. It will be answered as soon as possible. Please hold";
+	private String messageGoodbye = "You must press a key to continue. You can call the switchboard again to restart from here. Goodbye";
 
+	
+	
 	// Is the heartbeat process running? It's an independant thread, and sends a message at regular intervals
 	private Thread heartbeatThread;
 	// Cheap and cheerful interthread communication
@@ -85,6 +88,8 @@ public final class Switchboard implements Runnable {
 			messageUnregistrationSuccessful = o.getString("messageUnregistrationSuccessful");
 		if (o.containsKey("messageWelcome"))
 			messageWelcome = o.getString("messageWelcome");
+		if (o.containsKey("messageGoodbye"))
+			messageGoodbye= o.getString("messageGoodbye");
 		
 		// Allow the callback URL to be edited, as I keep getting this wrong
 		// Default to web.xml
@@ -123,6 +128,7 @@ public final class Switchboard implements Runnable {
 				.add("messageRegistrationIvr", messageRegistrationIvr)
 				.add("messageUnregistrationSuccessful", messageUnregistrationSuccessful)
 				.add("messageWelcome", messageWelcome)
+				.add("messageGoodbye", messageGoodbye)
 				.add("callbackUrl", Settings.s.callbackUrl );
 
 		message.add("setting", settings);
@@ -310,6 +316,10 @@ public final class Switchboard implements Runnable {
 
 	public String getMessageUnregistrationSuccessful() {
 		return getMessage(this.messageUnregistrationSuccessful);
+	}
+	
+	public String getMessageGoodbye() {
+		return getMessage(this.messageGoodbye);
 	}
 
 }

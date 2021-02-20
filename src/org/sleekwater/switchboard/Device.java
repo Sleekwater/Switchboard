@@ -12,7 +12,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.websocket.Session;
 
-import org.sleekwater.switchboard.Goal.GoalRunner;
 import org.sleekwater.switchboard.websocket.ClientWebsocketServlet;
 
 import com.plivo.helper.api.client.RestAPI;
@@ -58,6 +57,8 @@ public class Device {
 	private HashMap<IvrStep, Long> timers = new HashMap<IvrStep, Long>();	
 	// Is there an interrupt pending for this device? We have just the one at a time
 	private CallInterruptTimer interrupt = null;
+	// If we're looping on an ivrstep (because nothing was pressed) then how many times should we loop?
+	public int loopCount;
 	
 	@Override
 	public String toString()
@@ -110,6 +111,7 @@ public class Device {
 	 */
 	public void updateIvrProgress(IvrStep newStep)
 	{
+		loopCount = newStep.numLoops;
 		if (!"resume".equalsIgnoreCase(newStep.name))
 		{
 			// Never move to the "resume" step, as that would overwrite what the resume functionality needs in order to work!			

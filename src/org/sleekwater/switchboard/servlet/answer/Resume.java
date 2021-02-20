@@ -87,6 +87,17 @@ public class Resume extends HttpServlet {
 						+ (d.currentAudio == null ? "" : "<Play>" + d.currentAudio.getUrl() + "</Play>")
 						+ "</GetDigits></Response>";
 				
+				// Make sure we don't loop forever
+				if (null != d)
+				{
+					d.loopCount--;
+					if (d.loopCount <=0)
+					{
+						xml = "<Response>"							
+								+ Switchboard.s.getMessageGoodbye()
+								+ "</Response>";
+					}
+				}				
 			}
 		}
 		catch (Exception e)

@@ -28,9 +28,10 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 	Service.connected = false;
 	Service.errormessage = [];
 	// Default server settings, will be overwritten by a server message
-	Service.setting = {'autoregister':false, 'isivrmode':true,
+	Service.setting = {'autoregister':false, 'isivrmode':true, 'skipregistration':false,
 			'messageCannotRegister':'','messageGenericError':'','messageInvalidKey':'','messageMustConfirmRegistration':'',
-			'messagePleaseWait':'','messageRegistrationComplete':'','messageRegistrationIvr':'','messageUnregistrationSuccessful':'','messageWelcome':'',
+			'messagePleaseWait':'','messageRegistrationComplete':'','messageRegistrationIvr':'','messageUnregistrationSuccessful':'',
+			'messageWelcome':'', 'messageGoodbye':'',
 			'isheartbeat':false, 'heartbeatnumber':'', 'callbackUrl':'', auditgroup:true};
 	
 	//console.log(authCookie);
@@ -272,6 +273,7 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 				{
 					// Load up some system-wide settings that might change how everything works
 					Service.setting.isivrmode = data.setting.isivrmode;
+					Service.setting.skipregistration = data.setting.skipregistration;
 					Service.setting.autoregister = data.setting.autoregister;
 					Service.setting.isheartbeat = data.setting.isheartbeat;
 					Service.setting.heartbeatnumber = data.setting.heartbeatnumber;
@@ -284,6 +286,7 @@ phonecatApp.factory('NotifyService', ['$rootScope','$cookies', '$timeout', funct
 					Service.setting.messageRegistrationIvr = data.setting.messageRegistrationIvr;
 					Service.setting.messageUnregistrationSuccessful = data.setting.messageUnregistrationSuccessful;
 					Service.setting.messageWelcome = data.setting.messageWelcome;
+					Service.setting.messageGoodbye = data.setting.messageGoodbye;
 					Service.setting.callbackUrl = data.setting.callbackUrl;
 				}
 			});

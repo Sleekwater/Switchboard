@@ -76,6 +76,12 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
 	}
 	
+	$scope.ivrSkipRegistration = function() {
+		$scope.setting.skipregistration = !$scope.setting.skipregistration;
+		// Tell the server, as different things happen based on this
+		$scope.notifyService.ping('{"setting":' + JSON.stringify($scope.setting) + '}')
+	}
+	
 	$scope.heartbeat= function() {
 		$scope.setting.isheartbeat= !$scope.setting.isheartbeat;
 		// Tell the server, as different things happen based on this
@@ -671,6 +677,8 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 		newIvrstep.stopsteps = [];
 		newIvrstep.specialkey="";
 		newIvrstep.padding=5;
+		newIvrstep.finishonkey="*";
+		newIvrstep.numloops=5;
 		$scope.ivrsteps.push(newIvrstep)
 		$scope.activeIvrstep = newIvrstep;
 	}
@@ -707,23 +715,25 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 	{
 		ivrstep.stopsteps.splice(index, 1)
 	}
-	$scope.describeIvrstep = function(ivrstep)
-	{
-		// Special cases		
-		if (ivrstep.name =="callback")
-			return "callback: Drop this call and start a new call to the device";
-		
+	$scope.nameIvrstep = function(ivrstep)
+	{		
 		var src = "";
 		if (ivrstep.name.length>0) {
-			src += ivrstep.name + ":";
+			src += ivrstep.name;
 		}
 		else {
-			src += "<unnamed step>" + ":";
+			src += "<unnamed step>";
 		}
-		
-			
-			
+		return src;
+	}
+	$scope.describeIvrstep = function(ivrstep)
+	{
+		var src = "";
 		try{
+			// Special cases		
+			if (ivrstep.name =="callback")
+				return "Drop this call and start a new call to the device";
+
 			if (ivrstep.steptype=="playaudio")
 			{
 				if (ivrstep.audio) {
@@ -765,7 +775,7 @@ phonecatApp.controller('DeviceCtrl', function ($scope, NotifyService, fileUpload
 			}
 			else if (ivrstep.steptype=="record")
 			{
-				src += " records for up to " + ivrstep.recordtime + " seconds";
+				src += " records for up to " + ivrstep.recordtime + " seconds or until '" + ivrstep.finishonkey + "' pressed";
 			}
 			else if (ivrstep.steptype=="timer")
 			{

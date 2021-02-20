@@ -42,7 +42,15 @@ public class IvrStep {
 	/**
 	 *  How long do we wait after playing the audio (for a keypress)?
 	 */
-	public Integer paddingInSeconds = 5;	
+	public Integer paddingInSeconds = 5;
+	/**
+	 * When recording, what keys stop the recording?
+	 */
+	private String finishOnKey = "1234567890*#";	
+	/**
+	 * If no key is pressed, how many loops should we perform before hanging up?
+	 */
+	int numLoops = 5;
 	
 
 	// Parse the JSON into our object for ease of use; this is the reverse of toJson, except we've already stripped off the outer ivrstep level
@@ -106,6 +114,30 @@ public class IvrStep {
        	 catch (Exception e)
        	 {
        		 this.paddingInSeconds = 5;
+       	 }
+        }
+        
+        if (o.containsKey("finishonkey"))
+        {
+       	 try
+       	 {
+       		 this.finishOnKey = o.getString("finishonkey");
+       	 }
+       	 catch (Exception e)
+       	 {
+       		 this.finishOnKey = "1234567890*#";	// Any key
+       	 }
+        }
+        
+        if (o.containsKey("numloops"))
+        {
+       	 try
+       	 {
+       		 this.numLoops = Integer.parseInt(o.getString("numloops"));
+       	 }
+       	 catch (Exception e)
+       	 {
+       		 this.numLoops = 5;
        	 }
         }
 	}
@@ -179,7 +211,9 @@ public class IvrStep {
 				.add("recordtime", recordTime)				
 				.add("steptype", steptype)
 				.add("state", state.toString())
-				.add("padding", paddingInSeconds);
+				.add("padding", paddingInSeconds)
+				.add("finishonkey", finishOnKey)
+				.add("numloops", numLoops);
 
 		String errorMsg = validate();
 		if (errorMsg.length() > 0)
@@ -507,7 +541,7 @@ public class IvrStep {
 					System.out.println("recordTime of " + recordTime + " not an integer. "+ e);					
 				}	// Ignore and carry on - use the default length
 				rec.setMaxLength(recSecs);
-				rec.setFinishOnKey("*");
+				rec.setFinishOnKey(this.finishOnKey );
 				rec.setAction(Settings.s.callbackUrl + "GetRecording/" + d.number + "?ivr=true");
 				resp.append(rec);
 			}

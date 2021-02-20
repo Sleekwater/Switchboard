@@ -380,11 +380,14 @@
 						<input ng-model="queryivrstepsrc" style="width:90%;margin:10px;" placeholder="Filter ivr steps">				
 						
 						<ul style="overflow-y: scroll; height:300px">
-							<li style="overflow: hidden;" ng-repeat="ivrstep in ivrsteps | filter:queryivrstepsrc | orderBy:'name'" ng-click="selectIvrstep(ivrstep)" ng-class="{selected:ivrstep.name == activeIvrstep.name}">
-								<span ng-show="ivrstep.hasError"><img src="images/warning.png" title="{{ivrstep.error}}" alt="{{ivrstep.error}}"/></span>
-								<span>{{describeIvrstep(ivrstep)}}</span>
-								<span style="float:right;" ng-show="ivrstep.name != 'start' && ivrstep.name != 'resume'  && ivrstep.name != 'callback'" ng-click="deleteIvrstep(ivrstep)">Delete</span>
-							</li>
+							<table border="0" width="100%" style="overflow: hidden;margin:0; padding:0;" ng-repeat="ivrstep in ivrsteps | filter:queryivrstepsrc | orderBy:'name'" ng-click="selectIvrstep(ivrstep)" ng-class="{selected:ivrstep.name == activeIvrstep.name}">
+								<tr>
+								<td ng-show="ivrstep.hasError"><img src="images/warning.png" title="{{ivrstep.error}}" alt="{{ivrstep.error}}"/></td>
+								<td style="width:20%; font-size:200%;">{{nameIvrstep(ivrstep)}}</td>
+								<td style="width:70%; font-size:150%; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{describeIvrstep(ivrstep)}}</td>
+								<td style="float:right;"><span ng-show="ivrstep.name != 'start' && ivrstep.name != 'resume'  && ivrstep.name != 'callback'" ng-click="deleteIvrstep(ivrstep)">Delete</span></td>
+								</tr>
+							</table>
 						</ul>
 						
 						<!-- Ivr detail panel -->
@@ -396,7 +399,7 @@
 								<label><input type="radio" ng-model="activeIvrstep.steptype" value="playaudio"> Plays audio</label>
 								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="sendtext">Sends a Text</label>	
 								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="record"> Records</label>
-								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="timer"> Starts a timer</label>																
+								<label ng-show="activeIvrstep.name!='resume'"><input type="radio" ng-model="activeIvrstep.steptype" value="timer"> Starts a timer</label>	
 							</div>
 							
 							<!--  Audio only subpanel -->
@@ -452,8 +455,10 @@
 											</select> ->
 											<span>Resumes from last step reached</span>
 										</li>
-										<span>Allowing <input ng-model="activeIvrstep.padding" style="width:20%;margin:10px;" placeholder="Seconds"> seconds to make a choice
-										</span>
+										<div>Allowing <input ng-model="activeIvrstep.padding" style="width:20%;margin:10px;" placeholder="Seconds"> seconds to make a choice
+										</div>
+										<div>Looping <input ng-model="activeIvrstep.numloops" style="width:20%;margin:10px;" placeholder="number"> times if nothing selected
+										</div>
 									</ul>
 								</div>	
 							</div>											
@@ -479,7 +484,11 @@
 							<div ng-show="activeIvrstep.steptype=='record'">							
 								<div class="four columns">
 									<h4>...for up to...</h4>
-									<input ng-model="activeIvrstep.recordtime" style="width:90%;margin:10px;" placeholder="Seconds"> seconds, or until * is pressed
+									<div><input ng-model="activeIvrstep.recordtime" style="width:40%;margin:10px;" placeholder="Seconds"> seconds
+									</div>
+									or until any one of these keys
+									<div><input ng-model="activeIvrstep.finishonkey" style="width:40%;margin:10px;" placeholder="One or more keys"> is pressed
+									</div>
 								</div>
 								<div class="four columns">								
 									<h4>...then goes to step</h4>
@@ -535,8 +544,11 @@
 						
 						<input style="font-size:1em" ng-model="setting.callbackUrl" placeholder="URL with trailing / ">&nbsp;The fully-qualified URL that this server is hosted on, so Plivo can contact us&nbsp;<button class="go" ng-click = "saveSettings()">Save</button> <br/>			
 						<button class="error" ng-click="resetDevices()">Reset</button>&nbsp;Remove all registered devices from the performance. This cannot be undone.<br/>					
-						<button ng-click="ivrMode()" ng-class="{selected: setting.isivrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu if enabled, or use goals for automation<br/>
 						<button ng-click="autoRegister()" ng-class="{selected: setting.autoregister}">Registration</button>&nbsp;Can devices register themselves by phoning the switchboard?<br/>
+						<button ng-click="ivrMode()" ng-class="{selected: setting.isivrmode}">IVR mode</button>&nbsp;Use an interactive voice response menu if enabled, or use goals for automation<br/>
+						<span ng-show="setting.isivrmode">
+						  <button ng-click="ivrSkipRegistration()" ng-class="{selected: setting.skipregistration}">Skip confirmation</button>&nbsp;Skip the confirmation of registration and start the IVR menu immediately<br/>
+						</span>
 						<button ng-click="toggleActivePanel('defaults')">Default messages...</button>
 						<h5>Backup and restore</h5>
 						<div>Download files for safekeeping or analysis</div>
@@ -570,6 +582,8 @@
 							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageRegistrationIvr">
 							Unregistration successful
 							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageUnregistrationSuccessful">
+							When an IVR step is waiting for a keypress but has exceeded the number of loops permitted
+							<input class="u-full-width" placeholder="Name" id="nameInput" type="text" style="height:1em" ng-model="setting.messageGoodbye">
 							<button class="wide" ng-click="saveSettings();toggleActivePanel('settings')">Save</button>				
 					</div>
 				</div>
